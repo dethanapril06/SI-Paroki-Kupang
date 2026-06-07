@@ -68,8 +68,7 @@ class KubController extends Controller
     public function edit(Kub $kub)
     {
         $wilayah = Wilayah::orderBy('nama')->get();
-        // Umat yang bisa dipilih sebagai ketua adalah umat yang tinggal di KUB ini
-        $umat = Umat::whereHas('keluarga', fn($q) => $q->where('kub_id', $kub->id))
+        $umat = Umat::aktif()->whereHas('keluarga', fn($q) => $q->where('kub_id', $kub->id))
             ->orderBy('nama')
             ->get();
 

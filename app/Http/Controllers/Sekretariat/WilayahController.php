@@ -81,7 +81,7 @@ class WilayahController extends Controller
         $kuasi  = Kuasi::orderBy('nama')->get();
         $stasi  = Stasi::orderBy('nama')->get();
         // Umat yang bisa dipilih sebagai ketua: umat dalam KUB yang ada di wilayah ini
-        $umat = Umat::whereHas('keluarga.kub', fn($q) => $q->where('wilayah_id', $wilayah->id))
+        $umat = Umat::aktif()->whereHas('keluarga.kub', fn($q) => $q->where('wilayah_id', $wilayah->id))
             ->orderBy('nama')
             ->get();
 
