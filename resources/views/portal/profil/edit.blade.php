@@ -1,0 +1,238 @@
+@extends('layouts.portal')
+
+@section('title', 'Edit Data Pribadi')
+
+@section('content')
+    <div class="page-heading">
+        <div class="page-title mb-3">
+            <div class="row">
+                <div class="col-12 col-md-6 order-md-1 order-last">
+                    <h3>Edit Data Pribadi</h3>
+                    <p class="text-muted">Perbarui data pribadi Anda.</p>
+                </div>
+                <div class="col-12 col-md-6 order-md-2 order-first">
+                    <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item">
+                                <a href="{{ route('portal.dashboard') }}">Dashboard</a>
+                            </li>
+                            <li class="breadcrumb-item active">Edit Data Pribadi</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+
+        <section class="section">
+            <div class="row justify-content-center">
+                <div class="col-12 col-lg-9">
+
+                    <div class="alert alert-light-info color-info mb-3">
+                        <i class="bi bi-info-circle-fill me-2"></i>
+                        Untuk perubahan <strong>keluarga, KUB, atau wilayah</strong>, gunakan fitur
+                        <a href="{{ route('portal.mutasi.umat.create') }}" class="fw-semibold">Pengajuan Mutasi</a>.
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">
+                                <i class="bi bi-person-fill me-2 text-primary"></i>
+                                Data Pribadi — {{ $umat->nama }}
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <form action="{{ route('portal.profil.update') }}" method="POST">
+                                @csrf
+                                @method('PUT')
+
+                                @if ($errors->any())
+                                    <div class="alert alert-light-danger color-danger mb-3">
+                                        <ul class="mb-0">
+                                            @foreach ($errors->all() as $error)
+                                                <li>{{ $error }}</li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                @endif
+
+                                {{-- ── IDENTITAS DASAR ── --}}
+                                <h6 class="fw-bold text-muted mb-3 border-bottom pb-2">Identitas Dasar</h6>
+                                <div class="row g-3 mb-4">
+
+                                    <div class="col-md-12">
+                                        <label for="nama" class="form-label">
+                                            Nama Lengkap <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="text" name="nama" id="nama"
+                                            class="form-control @error('nama') is-invalid @enderror"
+                                            value="{{ old('nama', $umat->nama) }}">
+                                        @error('nama')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="tempat_lahir" class="form-label">
+                                            Tempat Lahir <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="text" name="tempat_lahir" id="tempat_lahir"
+                                            class="form-control @error('tempat_lahir') is-invalid @enderror"
+                                            value="{{ old('tempat_lahir', $umat->tempat_lahir) }}">
+                                        @error('tempat_lahir')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="tanggal_lahir" class="form-label">
+                                            Tanggal Lahir <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="date" name="tanggal_lahir" id="tanggal_lahir"
+                                            class="form-control @error('tanggal_lahir') is-invalid @enderror"
+                                            value="{{ old('tanggal_lahir', $umat->tanggal_lahir?->format('Y-m-d')) }}">
+                                        @error('tanggal_lahir')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="jenis_kelamin" class="form-label">
+                                            Jenis Kelamin <span class="text-danger">*</span>
+                                        </label>
+                                        <select name="jenis_kelamin" id="jenis_kelamin"
+                                            class="form-select @error('jenis_kelamin') is-invalid @enderror">
+                                            <option value="Laki-laki" {{ old('jenis_kelamin', $umat->jenis_kelamin) === 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
+                                            <option value="Perempuan" {{ old('jenis_kelamin', $umat->jenis_kelamin) === 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
+                                        </select>
+                                        @error('jenis_kelamin')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="golongan_darah" class="form-label">Golongan Darah</label>
+                                        <select name="golongan_darah" id="golongan_darah"
+                                            class="form-select @error('golongan_darah') is-invalid @enderror">
+                                            <option value="">-- Pilih --</option>
+                                            @foreach (['A', 'B', 'AB', 'O'] as $gd)
+                                                <option value="{{ $gd }}"
+                                                    {{ old('golongan_darah', $umat->golongan_darah) === $gd ? 'selected' : '' }}>
+                                                    {{ $gd }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @error('golongan_darah')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="nama_ayah" class="form-label">Nama Ayah</label>
+                                        <input type="text" name="nama_ayah" id="nama_ayah"
+                                            class="form-control @error('nama_ayah') is-invalid @enderror"
+                                            value="{{ old('nama_ayah', $umat->nama_ayah) }}">
+                                        @error('nama_ayah')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="nama_ibu" class="form-label">Nama Ibu</label>
+                                        <input type="text" name="nama_ibu" id="nama_ibu"
+                                            class="form-control @error('nama_ibu') is-invalid @enderror"
+                                            value="{{ old('nama_ibu', $umat->nama_ibu) }}">
+                                        @error('nama_ibu')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                {{-- ── KONTAK & SOSIAL ── --}}
+                                <h6 class="fw-bold text-muted mb-3 border-bottom pb-2">Kontak & Sosial</h6>
+                                <div class="row g-3 mb-4">
+
+                                    <div class="col-md-6">
+                                        <label for="no_telepon" class="form-label">No. Telepon</label>
+                                        <input type="text" name="no_telepon" id="no_telepon"
+                                            class="form-control @error('no_telepon') is-invalid @enderror"
+                                            value="{{ old('no_telepon', $umat->no_telepon) }}"
+                                            placeholder="08xx-xxxx-xxxx">
+                                        @error('no_telepon')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="status_pernikahan" class="form-label">
+                                            Status Pernikahan <span class="text-danger">*</span>
+                                        </label>
+                                        <select name="status_pernikahan" id="status_pernikahan"
+                                            class="form-select @error('status_pernikahan') is-invalid @enderror">
+                                            @foreach (['Belum Kawin', 'Kawin', 'Cerai Hidup', 'Cerai Mati'] as $status)
+                                                <option value="{{ $status }}"
+                                                    {{ old('status_pernikahan', $umat->status_pernikahan) === $status ? 'selected' : '' }}>
+                                                    {{ $status }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @error('status_pernikahan')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="pekerjaan" class="form-label">Pekerjaan</label>
+                                        <input type="text" name="pekerjaan" id="pekerjaan"
+                                            class="form-control @error('pekerjaan') is-invalid @enderror"
+                                            value="{{ old('pekerjaan', $umat->pekerjaan) }}"
+                                            placeholder="Guru, Petani, Wiraswasta, ...">
+                                        @error('pekerjaan')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="pendidikan" class="form-label">Pendidikan Terakhir</label>
+                                        <select name="pendidikan" id="pendidikan"
+                                            class="form-select @error('pendidikan') is-invalid @enderror">
+                                            <option value="">-- Pilih --</option>
+                                            @foreach (['Tidak Sekolah', 'SD', 'SMP', 'SMA', 'D3', 'S1', 'S2', 'S3'] as $p)
+                                                <option value="{{ $p }}"
+                                                    {{ old('pendidikan', $umat->pendidikan) === $p ? 'selected' : '' }}>
+                                                    {{ $p }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @error('pendidikan')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="col-12">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="penyandang_disabilitas"
+                                                id="penyandang_disabilitas" value="1"
+                                                {{ old('penyandang_disabilitas', $umat->penyandang_disabilitas) ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="penyandang_disabilitas">
+                                                Penyandang Disabilitas
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex gap-2 justify-content-end">
+                                    <a href="{{ route('portal.dashboard') }}"
+                                        class="btn btn-light-secondary">Batal</a>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-save me-1"></i>Simpan Perubahan
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+    </div>
+@endsection
