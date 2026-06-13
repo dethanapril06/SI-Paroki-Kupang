@@ -101,7 +101,6 @@
                                     <tbody>
                                         @forelse ($keluarga->umat as $member)
                                             @php
-                                                $member->loadMissing('sakramen');
                                                 $sakramens = $member->sakramen->pluck('jenis_sakramen')->toArray();
                                             @endphp
                                             <tr class="{{ $member->status_almarhum ? 'table-dark text-muted' : '' }}">

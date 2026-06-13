@@ -120,13 +120,14 @@
                         </div>
                         <div class="card-body p-0">
                             <div class="table-responsive">
-                                <table class="table table-hover mb-0">
+                                <table class="table table-hover mb-0" id="table1">
                                     <thead class="table-light">
                                         <tr>
                                             <th>Nama</th>
                                             <th>Hubungan</th>
                                             <th>L/P</th>
                                             <th>Tanggal Lahir</th>
+                                            <th>Status Sakramen</th>
                                             <th>Status Nikah</th>
                                             <th>No. Telepon</th>
                                         </tr>
@@ -154,6 +155,40 @@
                                                     @endif
                                                 </td>
                                                 <td>{{ $anggota->tanggal_lahir?->format('d M Y') ?? '-' }}</td>
+                                                <td>
+                                                    @php
+                                                        $sakramens = $anggota->sakramen->pluck('jenis_sakramen')->toArray();
+                                                    @endphp
+                                                    <div class="d-flex flex-wrap gap-1">
+                                                        @if (in_array('BAPTIS', $sakramens))
+                                                            <span class="badge bg-light-info text-info py-1 px-2 border border-info" title="Sudah Baptis">
+                                                                <i class="bi bi-droplet-fill me-1"></i>Baptis
+                                                            </span>
+                                                        @endif
+
+                                                        @if (in_array('KOMUNI_PERTAMA', $sakramens))
+                                                            <span class="badge bg-light-success text-success py-1 px-2 border border-success" title="Sudah Komuni Pertama">
+                                                                <i class="bi bi-bookmark-star-fill me-1"></i>Komuni
+                                                            </span>
+                                                        @endif
+
+                                                        @if (in_array('KRISMA', $sakramens))
+                                                            <span class="badge bg-light-warning text-warning py-1 px-2 border border-warning" title="Sudah Krisma">
+                                                                <i class="bi bi-star-fill me-1"></i>Krisma
+                                                            </span>
+                                                        @endif
+
+                                                        @if (in_array('PERNIKAHAN', $sakramens))
+                                                            <span class="badge bg-light-danger text-danger py-1 px-2 border border-danger" title="Sudah Menikah">
+                                                                <i class="bi bi-heart-fill me-1"></i>Nikah
+                                                            </span>
+                                                        @endif
+
+                                                        @if (empty($sakramens))
+                                                            <span class="text-muted">-</span>
+                                                        @endif
+                                                    </div>
+                                                </td>
                                                 <td>{{ $anggota->status_pernikahan ?? '-' }}</td>
                                                 <td>{{ $anggota->no_telepon ?? '-' }}</td>
                                             </tr>

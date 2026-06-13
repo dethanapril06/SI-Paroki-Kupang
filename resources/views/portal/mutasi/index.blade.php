@@ -62,7 +62,7 @@
                     @endif
 
                     <div class="table-responsive">
-                        <table class="table table-hover align-middle">
+                        <table class="table table-hover align-middle" id="table1">
                             <thead>
                                 <tr>
                                     <th>No</th>

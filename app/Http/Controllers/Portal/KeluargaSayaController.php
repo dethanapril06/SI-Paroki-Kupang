@@ -53,7 +53,7 @@ class KeluargaSayaController extends Controller
         $keluarga = Keluarga::with([
             'kepalaKeluarga' => fn($q) => $q->aktif(),
             'kub.wilayah',
-            'umat' => fn($q) => $q->aktif()->orderByRaw("FIELD(hubungan_keluarga, 'Suami','Istri','Ayah','Ibu','Anak','Saudara','Lainnya')")->orderBy('tanggal_lahir'),
+            'umat' => fn($q) => $q->aktif()->with('sakramen')->orderByRaw("FIELD(hubungan_keluarga, 'Suami','Istri','Ayah','Ibu','Anak','Saudara','Lainnya')")->orderBy('tanggal_lahir'),
         ])->findOrFail($umat->keluarga_id);
 
         $isKetuaKeluarga = (int) $keluarga->kepala_keluarga_id === (int) $umatId;
@@ -123,8 +123,9 @@ class KeluargaSayaController extends Controller
 
         return Keluarga::with([
             'kepalaKeluarga' => fn($q) => $q->aktif(),
-            'kub.wilayah',
-            'umat' => fn($q) => $q->aktif()->orderBy('nama'),
+            'kub.wilayah.paroki.klerus',
+            'kub.ketuaUmat',
+            'umat' => fn($q) => $q->aktif()->with('sakramen')->orderBy('nama'),
         ])->findOrFail($umat->keluarga_id);
     }
 

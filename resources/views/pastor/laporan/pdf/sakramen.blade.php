@@ -113,7 +113,7 @@
         <img src="{{ public_path('images/Kiri.jpeg') }}" class="header-logo header-logo-left" alt="Logo kiri">
         <img src="{{ public_path('images/Kanan.jpeg') }}" class="header-logo header-logo-right" alt="Logo kanan">
         <div class="header-text">
-            <h1>PAROKI ST. MARIA ASSUMPTA KUPANG</h1>
+            <h1>PAROKI Kathedral Kristus Raja Kupang KUPANG</h1>
             <h3>KEUSKUPAN AGUNG KUPANG</h3>
             <p>Jl. Perintis Kemerdekaan, Kota Kupang, NTT | Telp: (0380) 821956</p>
         </div>
@@ -196,20 +196,34 @@
         </tbody>
     </table>
 
+    @php
+        $currentParoki = null;
+        $currentUser = \Illuminate\Support\Facades\Auth::user();
+        if ($currentUser && $currentUser->umat && $currentUser->umat->keluarga && $currentUser->umat->keluarga->kub && $currentUser->umat->keluarga->kub->wilayah) {
+            $currentParoki = $currentUser->umat->keluarga->kub->wilayah->paroki;
+        }
+        if (!$currentParoki) {
+            $currentParoki = \App\Models\Paroki::with('klerus')->first();
+        } else {
+            $currentParoki->loadMissing('klerus');
+        }
+        $parokiNamaSign = $currentParoki ? $currentParoki->nama : 'Kathedral Kristus Raja Kupang';
+        $pastorNamaSign = $currentParoki && $currentParoki->klerus ? $currentParoki->klerus->nama : 'RD. GERARDUS DUKA, PR';
+    @endphp
     <div class="footer">
         <table class="footer-table">
             <tr>
                 <td class="text-left">
                     <div style="font-size: 8px; color: #555; margin-top: 40px;">
                         Dicetak pada: {{ date('d/m/Y H:i:s') }}<br>
-                        Sistem Informasi Paroki St. Maria Assumpta
+                        Sistem Informasi Paroki {{ $parokiNamaSign }}
                     </div>
                 </td>
                 <td>
                     Kupang, {{ date('d F Y') }}<br>
-                    <strong>Pastor Paroki St. Maria Assumpta</strong>
+                    <strong>Pastor Paroki {{ $parokiNamaSign }}</strong>
                     <div class="signature-area"></div>
-                    ( <strong>RD. GERARDUS DUKA, PR</strong> )
+                    ( <strong>{{ $pastorNamaSign }}</strong> )
                 </td>
             </tr>
         </table>

@@ -33,7 +33,7 @@ class KeluargaController extends Controller
         $keluarga->load([
             'kub.wilayah',
             'kepalaKeluarga' => fn($q) => $q->aktif(),
-            'umat' => fn($q) => $q->aktif()->orderBy('nama'),
+            'umat' => fn($q) => $q->aktif()->with('sakramen')->orderBy('nama'),
         ]);
 
         return view('pastor.keluarga.show', compact('keluarga'));

@@ -88,11 +88,24 @@ class SakramenSayaController extends Controller
     public function showBaptis()
     {
         $umat     = $this->getMyUmat();
-        $sakramen = $umat ? $this->getSakramen($umat, 'BAPTIS') : null;
+        $sakramen = $umat ? Sakramen::with([
+            'klerus',
+            'paroki',
+            'baptis.klerus',
+            'baptis.bapakBaptis',
+            'baptis.ibuBaptis'
+        ])
+            ->where('umat_id', $umat->id)
+            ->where('jenis_sakramen', 'BAPTIS')
+            ->first() : null;
         $baptis   = $sakramen?->baptis;
-        $klerusList = Klerus::orderBy('nama')->get();
+        $klerusList = Klerus::whereIn('jabatan', ['Pastor', 'Uskup', 'Diakon'])
+            ->orderBy('nama')
+            ->get();
+        $parokiList = Paroki::orderBy('nama')->get();
+        $umatWali   = Umat::aktif()->orderBy('nama')->get();
 
-        return view('portal.sakramen-saya.baptis.show', compact('umat', 'sakramen', 'baptis', 'klerusList'));
+        return view('portal.sakramen-saya.baptis.show', compact('umat', 'sakramen', 'baptis', 'klerusList', 'parokiList', 'umatWali'));
     }
 
     public function storeBaptis(Request $request)
@@ -105,36 +118,50 @@ class SakramenSayaController extends Controller
         }
 
         $data = $request->validate([
+            // --- Sakramen (parent) ---
             'tanggal_penerimaan'      => ['required', 'date'],
+            'paroki_id'               => ['nullable', 'exists:paroki,id'],
+            'klerus_id'               => ['nullable', 'exists:klerus,id'],
+            'nomor_surat'             => ['nullable', 'string', 'unique:sakramen,nomor_surat'],
+
+            // --- Baptis (child) ---
             'sumber_baptis'           => ['required', 'in:KATOLIK,PROTESTAN'],
             'nama_baptis'             => ['nullable', 'string', 'max:255'],
-            'tgl_baptis'              => ['required_if:sumber_baptis,PROTESTAN', 'nullable', 'date'],
-            'klerus_id'               => ['nullable', 'exists:klerus,id'],
-            'nama_pemberi_protestan'  => ['nullable', 'string', 'max:255'],
-            'nama_gereja_protestan'   => ['nullable', 'string', 'max:255'],
+            'tgl_baptis'              => [Rule::requiredIf($request->sumber_baptis === 'PROTESTAN'), 'nullable', 'date'],
+            'nama_pemberi_protestan'  => [Rule::requiredIf($request->sumber_baptis === 'PROTESTAN'), 'nullable', 'string', 'max:255'],
+            'nama_gereja_protestan'   => [Rule::requiredIf($request->sumber_baptis === 'PROTESTAN'), 'nullable', 'string', 'max:255'],
+            'tgl_diterima_katolik'    => [Rule::requiredIf($request->sumber_baptis === 'PROTESTAN'), 'nullable', 'date', 'after_or_equal:tgl_baptis'],
+            'bapak_baptis_id'         => ['nullable', 'exists:umat,id'],
             'bapak_baptis_nama'       => ['nullable', 'string', 'max:255'],
+            'ibu_baptis_id'           => ['nullable', 'exists:umat,id'],
             'ibu_baptis_nama'         => ['nullable', 'string', 'max:255'],
         ]);
 
+        $this->validateWaliBaptis($request);
+
         DB::transaction(function () use ($umat, $data) {
             $sakramen = Sakramen::create([
-                'umat_id'           => $umat->id,
-                'jenis_sakramen'    => 'BAPTIS',
-                'tanggal_penerimaan'=> $data['tanggal_penerimaan'],
-                'paroki_id'         => $this->getParokiId($umat),
-                'klerus_id'         => $data['klerus_id'] ?? null,
+                'umat_id'            => $umat->id,
+                'jenis_sakramen'     => 'BAPTIS',
+                'tanggal_penerimaan' => $data['tanggal_penerimaan'],
+                'paroki_id'          => $data['paroki_id'] ?? $this->getParokiId($umat),
+                'klerus_id'          => $data['sumber_baptis'] === 'KATOLIK' ? ($data['klerus_id'] ?? null) : null,
+                'nomor_surat'        => $data['nomor_surat'] ?? null,
             ]);
 
             Baptis::create([
                 'sakramen_id'            => $sakramen->id,
                 'sumber_baptis'          => $data['sumber_baptis'],
                 'nama_baptis'            => $data['nama_baptis'] ?? null,
-                'tgl_baptis'             => $data['tgl_baptis'] ?? $data['tanggal_penerimaan'],
-                'klerus_id'              => $data['klerus_id'] ?? null,
-                'nama_pemberi_protestan' => $data['nama_pemberi_protestan'] ?? null,
-                'nama_gereja_protestan'  => $data['nama_gereja_protestan'] ?? null,
-                'bapak_baptis_nama'      => $data['bapak_baptis_nama'] ?? null,
-                'ibu_baptis_nama'        => $data['ibu_baptis_nama'] ?? null,
+                'tgl_baptis'             => $data['sumber_baptis'] === 'KATOLIK' ? $data['tanggal_penerimaan'] : ($data['tgl_baptis'] ?? null),
+                'klerus_id'              => $data['sumber_baptis'] === 'KATOLIK' ? ($data['klerus_id'] ?? null) : null,
+                'nama_pemberi_protestan' => $data['sumber_baptis'] === 'PROTESTAN' ? ($data['nama_pemberi_protestan'] ?? null) : null,
+                'nama_gereja_protestan'  => $data['sumber_baptis'] === 'PROTESTAN' ? ($data['nama_gereja_protestan'] ?? null) : null,
+                'tgl_diterima_katolik'   => $data['sumber_baptis'] === 'PROTESTAN' ? ($data['tgl_diterima_katolik'] ?? null) : null,
+                'bapak_baptis_id'        => $data['bapak_baptis_id'] ?? null,
+                'bapak_baptis_nama'      => empty($data['bapak_baptis_id']) ? ($data['bapak_baptis_nama'] ?? null) : null,
+                'ibu_baptis_id'          => $data['ibu_baptis_id'] ?? null,
+                'ibu_baptis_nama'        => empty($data['ibu_baptis_id']) ? ($data['ibu_baptis_nama'] ?? null) : null,
             ]);
         });
 
@@ -145,12 +172,25 @@ class SakramenSayaController extends Controller
     public function editBaptis()
     {
         $umat     = $this->getMyUmat();
-        $sakramen = $umat ? $this->getSakramen($umat, 'BAPTIS') : null;
+        $sakramen = $umat ? Sakramen::with([
+            'klerus',
+            'paroki',
+            'baptis.klerus',
+            'baptis.bapakBaptis',
+            'baptis.ibuBaptis'
+        ])
+            ->where('umat_id', $umat->id)
+            ->where('jenis_sakramen', 'BAPTIS')
+            ->first() : null;
         abort_if(!$sakramen, 404, 'Data baptis belum ada.');
         $baptis   = $sakramen->baptis;
-        $klerusList = Klerus::orderBy('nama')->get();
+        $klerusList = Klerus::whereIn('jabatan', ['Pastor', 'Uskup', 'Diakon'])
+            ->orderBy('nama')
+            ->get();
+        $parokiList = Paroki::orderBy('nama')->get();
+        $umatWali   = Umat::aktif()->orderBy('nama')->get();
 
-        return view('portal.sakramen-saya.baptis.form', compact('umat', 'sakramen', 'baptis', 'klerusList'));
+        return view('portal.sakramen-saya.baptis.form', compact('umat', 'sakramen', 'baptis', 'klerusList', 'parokiList', 'umatWali'));
     }
 
     public function updateBaptis(Request $request)
@@ -160,36 +200,64 @@ class SakramenSayaController extends Controller
         abort_if(!$sakramen, 404);
 
         $data = $request->validate([
+            // --- Sakramen (parent) ---
             'tanggal_penerimaan'      => ['required', 'date'],
+            'paroki_id'               => ['nullable', 'exists:paroki,id'],
+            'klerus_id'               => ['nullable', 'exists:klerus,id'],
+            'nomor_surat'             => ['nullable', 'string', Rule::unique('sakramen', 'nomor_surat')->ignore($sakramen->id)],
+
+            // --- Baptis (child) ---
             'sumber_baptis'           => ['required', 'in:KATOLIK,PROTESTAN'],
             'nama_baptis'             => ['nullable', 'string', 'max:255'],
-            'tgl_baptis'              => ['required_if:sumber_baptis,PROTESTAN', 'nullable', 'date'],
-            'klerus_id'               => ['nullable', 'exists:klerus,id'],
-            'nama_pemberi_protestan'  => ['nullable', 'string', 'max:255'],
-            'nama_gereja_protestan'   => ['nullable', 'string', 'max:255'],
+            'tgl_baptis'              => [Rule::requiredIf($request->sumber_baptis === 'PROTESTAN'), 'nullable', 'date'],
+            'nama_pemberi_protestan'  => [Rule::requiredIf($request->sumber_baptis === 'PROTESTAN'), 'nullable', 'string', 'max:255'],
+            'nama_gereja_protestan'   => [Rule::requiredIf($request->sumber_baptis === 'PROTESTAN'), 'nullable', 'string', 'max:255'],
+            'tgl_diterima_katolik'    => [Rule::requiredIf($request->sumber_baptis === 'PROTESTAN'), 'nullable', 'date', 'after_or_equal:tgl_baptis'],
+            'bapak_baptis_id'         => ['nullable', 'exists:umat,id'],
             'bapak_baptis_nama'       => ['nullable', 'string', 'max:255'],
+            'ibu_baptis_id'           => ['nullable', 'exists:umat,id'],
             'ibu_baptis_nama'         => ['nullable', 'string', 'max:255'],
         ]);
+
+        $this->validateWaliBaptis($request);
 
         DB::transaction(function () use ($sakramen, $data) {
             $sakramen->update([
                 'tanggal_penerimaan' => $data['tanggal_penerimaan'],
-                'klerus_id'          => $data['klerus_id'] ?? null,
+                'paroki_id'          => $data['paroki_id'] ?? $sakramen->paroki_id,
+                'klerus_id'          => $data['sumber_baptis'] === 'KATOLIK' ? ($data['klerus_id'] ?? null) : null,
+                'nomor_surat'        => $data['nomor_surat'] ?? null,
             ]);
             $sakramen->baptis->update([
                 'sumber_baptis'          => $data['sumber_baptis'],
                 'nama_baptis'            => $data['nama_baptis'] ?? null,
-                'tgl_baptis'             => $data['tgl_baptis'] ?? $data['tanggal_penerimaan'],
-                'klerus_id'              => $data['klerus_id'] ?? null,
-                'nama_pemberi_protestan' => $data['nama_pemberi_protestan'] ?? null,
-                'nama_gereja_protestan'  => $data['nama_gereja_protestan'] ?? null,
-                'bapak_baptis_nama'      => $data['bapak_baptis_nama'] ?? null,
-                'ibu_baptis_nama'        => $data['ibu_baptis_nama'] ?? null,
+                'tgl_baptis'             => $data['sumber_baptis'] === 'KATOLIK' ? $data['tanggal_penerimaan'] : ($data['tgl_baptis'] ?? null),
+                'klerus_id'              => $data['sumber_baptis'] === 'KATOLIK' ? ($data['klerus_id'] ?? null) : null,
+                'nama_pemberi_protestan' => $data['sumber_baptis'] === 'PROTESTAN' ? ($data['nama_pemberi_protestan'] ?? null) : null,
+                'nama_gereja_protestan'  => $data['sumber_baptis'] === 'PROTESTAN' ? ($data['nama_gereja_protestan'] ?? null) : null,
+                'tgl_diterima_katolik'   => $data['sumber_baptis'] === 'PROTESTAN' ? ($data['tgl_diterima_katolik'] ?? null) : null,
+                'bapak_baptis_id'        => $data['bapak_baptis_id'] ?? null,
+                'bapak_baptis_nama'      => empty($data['bapak_baptis_id']) ? ($data['bapak_baptis_nama'] ?? null) : null,
+                'ibu_baptis_id'          => $data['ibu_baptis_id'] ?? null,
+                'ibu_baptis_nama'        => empty($data['ibu_baptis_id']) ? ($data['ibu_baptis_nama'] ?? null) : null,
             ]);
         });
 
         return redirect()->route('portal.sakramen-saya.baptis')
             ->with('success', 'Data Baptis berhasil diperbarui.');
+    }
+
+    private function validateWaliBaptis(Request $request): void
+    {
+        $bapakTerisi = $request->filled('bapak_baptis_id') || $request->filled('bapak_baptis_nama');
+        $ibuTerisi   = $request->filled('ibu_baptis_id') || $request->filled('ibu_baptis_nama');
+
+        if (! $bapakTerisi && ! $ibuTerisi) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'bapak_baptis_nama' => 'Minimal bapak baptis atau ibu baptis harus diisi.',
+                'ibu_baptis_nama' => 'Minimal bapak baptis atau ibu baptis harus diisi.',
+            ]);
+        }
     }
 
     // ─────────────────────────────────────────────────────────────────────

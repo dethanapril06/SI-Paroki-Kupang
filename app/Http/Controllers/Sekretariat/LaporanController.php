@@ -70,7 +70,7 @@ class LaporanController extends Controller
         $selectedKub = $kubId ? Kub::find($kubId) : null;
 
         if ($subReport === 'belum_sakramen') {
-            // Rancang query "Statistik Sakramen per KUB" (anak < 18 tahun belum menerima inisiasi)
+            // Rancang query "Statistik Sakramen per KUB" (umat belum menerima inisiasi)
             $kubsData = Kub::with('wilayah')->get()->map(function ($kub) {
                 // Query seluruh umat aktif hidup di KUB ini
                 $umatQuery = Umat::where('status_almarhum', false)
@@ -79,37 +79,25 @@ class LaporanController extends Controller
                         $q->where('kub_id', $kub->id);
                     });
 
-                // Hitung total anak (< 18 tahun)
-                $totalAnak = (clone $umatQuery)->where(function($q) {
-                    $q->whereRaw('TIMESTAMPDIFF(YEAR, tanggal_lahir, CURDATE()) < 18')
-                      ->orWhereNull('tanggal_lahir');
-                })->count();
+                // Hitung total umat
+                $totalUmat = (clone $umatQuery)->count();
 
-                // Hitung anak belum baptis
-                $belumBaptis = (clone $umatQuery)->where(function($q) {
-                    $q->whereRaw('TIMESTAMPDIFF(YEAR, tanggal_lahir, CURDATE()) < 18')
-                      ->orWhereNull('tanggal_lahir');
-                })->whereDoesntHave('sakramen', function($q) {
+                // Hitung umat belum baptis
+                $belumBaptis = (clone $umatQuery)->whereDoesntHave('sakramen', function($q) {
                     $q->where('jenis_sakramen', 'BAPTIS');
                 })->count();
 
-                // Hitung anak belum komuni pertama
-                $belumKomuni = (clone $umatQuery)->where(function($q) {
-                    $q->whereRaw('TIMESTAMPDIFF(YEAR, tanggal_lahir, CURDATE()) < 18')
-                      ->orWhereNull('tanggal_lahir');
-                })->whereDoesntHave('sakramen', function($q) {
+                // Hitung umat belum komuni pertama
+                $belumKomuni = (clone $umatQuery)->whereDoesntHave('sakramen', function($q) {
                     $q->where('jenis_sakramen', 'KOMUNI_PERTAMA');
                 })->count();
 
-                // Hitung anak belum krisma
-                $belumKrisma = (clone $umatQuery)->where(function($q) {
-                    $q->whereRaw('TIMESTAMPDIFF(YEAR, tanggal_lahir, CURDATE()) < 18')
-                      ->orWhereNull('tanggal_lahir');
-                })->whereDoesntHave('sakramen', function($q) {
+                // Hitung umat belum krisma
+                $belumKrisma = (clone $umatQuery)->whereDoesntHave('sakramen', function($q) {
                     $q->where('jenis_sakramen', 'KRISMA');
                 })->count();
 
-                $kub->total_anak = $totalAnak;
+                $kub->total_umat = $totalUmat;
                 $kub->belum_baptis = $belumBaptis;
                 $kub->belum_komuni = $belumKomuni;
                 $kub->belum_krisma = $belumKrisma;

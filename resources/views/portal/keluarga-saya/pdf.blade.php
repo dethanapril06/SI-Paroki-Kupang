@@ -121,7 +121,7 @@
         }
 
         .footer-table td {
-            width: 50%;
+            width: 33%;
             padding: 10px;
         }
 
@@ -233,7 +233,13 @@
                         Mengetahui,<br>
                         <strong>Ketua KUB</strong>
                         <div class="signature-area"></div>
-                        (___________________________)
+                        ( <strong>{{ $keluarga->kub->ketuaUmat->nama ?? '...........................' }}</strong> )
+                    </td>
+                    <td>
+                        Pastor Paroki<br>
+                        <strong>{{ $keluarga->kub->wilayah->paroki->nama ?? 'Kathedral Kristus Raja Kupang' }}</strong>
+                        <div class="signature-area"></div>
+                        ( <strong>{{ $keluarga->kub->wilayah->paroki->klerus->nama ?? '..........................' }}</strong> )
                     </td>
                     <td>
                         Kupang, {{ now()->format('d F Y') }}<br>

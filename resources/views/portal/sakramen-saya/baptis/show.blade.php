@@ -42,9 +42,14 @@
                 <div class="card-body">
                     <table class="table table-borderless mb-0">
                         <tr><td class="text-muted fw-semibold" style="width:40%">Tanggal Penerimaan</td><td>{{ $sakramen->tanggal_penerimaan?->format('d M Y') }}</td></tr>
+                        <tr><td class="text-muted fw-semibold">Paroki</td><td>{{ $sakramen->paroki->nama ?? '-' }}</td></tr>
+                        <tr><td class="text-muted fw-semibold">Nomor Surat</td><td>{{ $sakramen->nomor_surat ?? '-' }}</td></tr>
                         <tr><td class="text-muted fw-semibold">Sumber Baptis</td><td>{{ $baptis->sumber_baptis }}</td></tr>
                         <tr><td class="text-muted fw-semibold">Nama Baptis</td><td>{{ $baptis->nama_baptis ?? '-' }}</td></tr>
                         <tr><td class="text-muted fw-semibold">Tanggal Baptis</td><td>{{ $baptis->tgl_baptis?->format('d M Y') ?? '-' }}</td></tr>
+                        @if ($baptis->sumber_baptis === 'PROTESTAN')
+                            <tr><td class="text-muted fw-semibold">Tanggal Diterima Katolik</td><td>{{ $baptis->tgl_diterima_katolik?->format('d M Y') ?? '-' }}</td></tr>
+                        @endif
                         <tr>
                             <td class="text-muted fw-semibold">Pemberi Baptis</td>
                             <td>
@@ -60,8 +65,8 @@
                                 @endif
                             </td>
                         </tr>
-                        <tr><td class="text-muted fw-semibold">Bapak Baptis</td><td>{{ $baptis->bapak_baptis_nama ?? '-' }}</td></tr>
-                        <tr><td class="text-muted fw-semibold">Ibu Baptis</td><td>{{ $baptis->ibu_baptis_nama ?? '-' }}</td></tr>
+                        <tr><td class="text-muted fw-semibold">Bapak Baptis</td><td>{{ $baptis->bapakBaptis->nama ?? $baptis->bapak_baptis_nama ?? '-' }}</td></tr>
+                        <tr><td class="text-muted fw-semibold">Ibu Baptis</td><td>{{ $baptis->ibuBaptis->nama ?? $baptis->ibu_baptis_nama ?? '-' }}</td></tr>
                     </table>
                 </div>
             </div>

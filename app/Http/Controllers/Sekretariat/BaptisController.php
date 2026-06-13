@@ -141,7 +141,7 @@ class BaptisController extends Controller
                                             : null,
 
                 // Tanggal
-                'tgl_baptis'             => $validated['tgl_baptis'] ?? $validated['tanggal_penerimaan'],
+                'tgl_baptis'             => $request->sumber_baptis === 'KATOLIK' ? $validated['tanggal_penerimaan'] : ($validated['tgl_baptis'] ?? null),
                 'tgl_diterima_katolik'   => $request->sumber_baptis === 'PROTESTAN'
                                             ? ($validated['tgl_diterima_katolik'] ?? null)
                                             : null,
@@ -288,7 +288,7 @@ class BaptisController extends Controller
                                             ? ($validated['nama_gereja_protestan'] ?? null)
                                             : null,
 
-                'tgl_baptis'             => $validated['tgl_baptis'] ?? $validated['tanggal_penerimaan'],
+                'tgl_baptis'             => $request->sumber_baptis === 'KATOLIK' ? $validated['tanggal_penerimaan'] : ($validated['tgl_baptis'] ?? null),
                 'tgl_diterima_katolik'   => $request->sumber_baptis === 'PROTESTAN'
                                             ? ($validated['tgl_diterima_katolik'] ?? null)
                                             : null,

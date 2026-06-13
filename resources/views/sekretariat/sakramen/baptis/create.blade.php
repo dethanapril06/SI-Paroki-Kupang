@@ -134,7 +134,7 @@
                                     </div>
 
                                     {{-- Tanggal Baptis --}}
-                                    <div class="col-12 col-md-6">
+                                    <div class="col-12 col-md-6" id="wrap-tgl-baptis">
                                         <div class="form-group">
                                             <label for="tgl_baptis">Tanggal Baptis <span class="text-danger" id="req-tgl-baptis">*</span></label>
                                             <input type="date"
@@ -297,6 +297,7 @@
                 document.getElementById('wrap-protestan').classList.toggle('d-none', sumber !== 'PROTESTAN');
                 document.getElementById('wrap-gereja').classList.toggle('d-none', sumber !== 'PROTESTAN');
                 document.getElementById('wrap-tgl-katolik').classList.toggle('d-none', sumber !== 'PROTESTAN');
+                document.getElementById('wrap-tgl-baptis').classList.toggle('d-none', sumber !== 'PROTESTAN');
 
                 const reqAsterisk = document.getElementById('req-tgl-baptis');
                 if (reqAsterisk) {

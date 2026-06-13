@@ -189,6 +189,308 @@
                                     Belum memiliki akun login.
                                 </p>
                             @endif
+                    </div>
+
+                    {{-- Riwayat Sakramen --}}
+                    @php
+                        $baptis = $umat->sakramen->firstWhere('jenis_sakramen', 'BAPTIS');
+                        $komuni = $umat->sakramen->firstWhere('jenis_sakramen', 'KOMUNI_PERTAMA');
+                        $krisma = $umat->sakramen->firstWhere('jenis_sakramen', 'KRISMA');
+                        $pernikahan = $umat->sakramen->firstWhere('jenis_sakramen', 'PERNIKAHAN');
+                        $minyakSuciList = $umat->sakramen->where('jenis_sakramen', 'MINYAK_SUCI')->sortBy('tanggal_penerimaan');
+                    @endphp
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Riwayat Sakramen</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="accordion" id="accordionSakramen">
+                                {{-- BAPTIS --}}
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingBaptis">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBaptis">
+                                            <i class="bi bi-droplet-fill text-info me-2"></i>
+                                            Baptis &nbsp;
+                                            @if ($baptis)
+                                                <span class="badge bg-light-success text-success ms-auto">Sudah Diterima</span>
+                                            @else
+                                                <span class="badge bg-light-secondary text-secondary ms-auto">Belum Ada Data</span>
+                                            @endif
+                                        </button>
+                                    </h2>
+                                    <div id="collapseBaptis" class="accordion-collapse collapse" data-bs-parent="#accordionSakramen">
+                                        <div class="accordion-body">
+                                            @if ($baptis)
+                                                <table class="table table-sm table-borderless mb-0">
+                                                    <tr>
+                                                        <th width="180">Nama Baptis</th>
+                                                        <td>{{ $baptis->baptis->nama_baptis ?? '-' }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Tanggal Penerimaan</th>
+                                                        <td>{{ $baptis->tanggal_penerimaan->format('d M Y') }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Paroki</th>
+                                                        <td>{{ $baptis->paroki->nama ?? '-' }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Sumber Baptis</th>
+                                                        <td>{{ $baptis->baptis->sumber_baptis ?? 'KATOLIK' }}</td>
+                                                    </tr>
+                                                    @if ($baptis->baptis && $baptis->baptis->sumber_baptis === 'PROTESTAN')
+                                                        <tr>
+                                                            <th>Gereja Asal</th>
+                                                            <td>{{ $baptis->baptis->nama_gereja_protestan ?? '-' }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Nama Pendeta</th>
+                                                            <td>{{ $baptis->baptis->nama_pemberi_protestan ?? '-' }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Tgl Diterima Katolik</th>
+                                                            <td>{{ $baptis->baptis->tgl_diterima_katolik ? $baptis->baptis->tgl_diterima_katolik->format('d M Y') : '-' }}</td>
+                                                        </tr>
+                                                    @else
+                                                        <tr>
+                                                            <th>Pemberi Baptis</th>
+                                                            <td>{{ $baptis->klerus->nama ?? '-' }}</td>
+                                                        </tr>
+                                                    @endif
+                                                    <tr>
+                                                        <th>Bapak Baptis</th>
+                                                        <td>{{ $baptis->baptis->bapakBaptis->nama ?? $baptis->baptis->bapak_baptis_nama ?? '-' }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Ibu Baptis</th>
+                                                        <td>{{ $baptis->baptis->ibuBaptis->nama ?? $baptis->baptis->ibu_baptis_nama ?? '-' }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Nomor Surat</th>
+                                                        <td>{{ $baptis->nomor_surat ?? '-' }}</td>
+                                                    </tr>
+                                                </table>
+                                            @else
+                                                <p class="text-muted mb-0 small">Belum ada data Sakramen Baptis terdaftar.</p>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- KOMUNI PERTAMA --}}
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingKomuni">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseKomuni">
+                                            <i class="bi bi-cup-hot-fill text-success me-2"></i>
+                                            Komuni Pertama &nbsp;
+                                            @if ($komuni)
+                                                <span class="badge bg-light-success text-success ms-auto">Sudah Diterima</span>
+                                            @else
+                                                <span class="badge bg-light-secondary text-secondary ms-auto">Belum Ada Data</span>
+                                            @endif
+                                        </button>
+                                    </h2>
+                                    <div id="collapseKomuni" class="accordion-collapse collapse" data-bs-parent="#accordionSakramen">
+                                        <div class="accordion-body">
+                                            @if ($komuni)
+                                                <table class="table table-sm table-borderless mb-0">
+                                                    <tr>
+                                                        <th width="180">Tanggal Penerimaan</th>
+                                                        <td>{{ $komuni->tanggal_penerimaan->format('d M Y') }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Paroki</th>
+                                                        <td>{{ $komuni->paroki->nama ?? '-' }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Pemberi Sakramen</th>
+                                                        <td>{{ $komuni->klerus->nama ?? '-' }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Nomor Surat</th>
+                                                        <td>{{ $komuni->nomor_surat ?? '-' }}</td>
+                                                    </tr>
+                                                </table>
+                                            @else
+                                                <p class="text-muted mb-0 small">Belum ada data Sakramen Komuni Pertama terdaftar.</p>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- KRISMA --}}
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingKrisma">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseKrisma">
+                                            <i class="bi bi-fire text-warning me-2"></i>
+                                            Krisma &nbsp;
+                                            @if ($krisma)
+                                                <span class="badge bg-light-success text-success ms-auto">Sudah Diterima</span>
+                                            @else
+                                                <span class="badge bg-light-secondary text-secondary ms-auto">Belum Ada Data</span>
+                                            @endif
+                                        </button>
+                                    </h2>
+                                    <div id="collapseKrisma" class="accordion-collapse collapse" data-bs-parent="#accordionSakramen">
+                                        <div class="accordion-body">
+                                            @if ($krisma)
+                                                <table class="table table-sm table-borderless mb-0">
+                                                    <tr>
+                                                        <th width="180">Nama Pelindung Krisma</th>
+                                                        <td>{{ $krisma->krisma->nama_krisma ?? '-' }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Tanggal Penerimaan</th>
+                                                        <td>{{ $krisma->tanggal_penerimaan->format('d M Y') }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Paroki</th>
+                                                        <td>{{ $krisma->paroki->nama ?? '-' }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Uskup/Klerus</th>
+                                                        <td>{{ $krisma->krisma->uskup->nama ?? $krisma->klerus->nama ?? '-' }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Nomor Surat</th>
+                                                        <td>{{ $krisma->nomor_surat ?? '-' }}</td>
+                                                    </tr>
+                                                </table>
+                                            @else
+                                                <p class="text-muted mb-0 small">Belum ada data Sakramen Krisma terdaftar.</p>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- PERNIKAHAN --}}
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingPernikahan">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePernikahan">
+                                            <i class="bi bi-heart-fill text-danger me-2"></i>
+                                            Pernikahan &nbsp;
+                                            @if ($pernikahan)
+                                                <span class="badge bg-light-success text-success ms-auto">Sudah Diterima</span>
+                                            @else
+                                                <span class="badge bg-light-secondary text-secondary ms-auto">Belum Ada Data</span>
+                                            @endif
+                                        </button>
+                                    </h2>
+                                    <div id="collapsePernikahan" class="accordion-collapse collapse" data-bs-parent="#accordionSakramen">
+                                        <div class="accordion-body">
+                                            @if ($pernikahan)
+                                                <table class="table table-sm table-borderless mb-0">
+                                                    <tr>
+                                                        <th width="180">Nama Pasangan</th>
+                                                        <td>
+                                                            @if ($pernikahan->pernikahan && $pernikahan->pernikahan->pasangan)
+                                                                <a href="{{ route('sekretariat.umat.show', $pernikahan->pernikahan->pasangan) }}">
+                                                                    {{ $pernikahan->pernikahan->pasangan->nama }}
+                                                                </a>
+                                                            @else
+                                                                {{ $pernikahan->pernikahan->pasangan_nama ?? '-' }}
+                                                            @endif
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Agama Pasangan</th>
+                                                        <td>{{ $pernikahan->pernikahan->pasangan_agama ?? ($pernikahan->pernikahan->pasangan_id ? 'Katolik' : '-') }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Jenis Pernikahan</th>
+                                                        <td>{{ $pernikahan->pernikahan ? (\App\Models\Pernikahan::JENIS[$pernikahan->pernikahan->jenis_pernikahan] ?? $pernikahan->pernikahan->jenis_pernikahan) : '-' }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Tanggal Pernikahan</th>
+                                                        <td>{{ $pernikahan->tanggal_penerimaan->format('d M Y') }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Paroki</th>
+                                                        <td>{{ $pernikahan->paroki->nama ?? '-' }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Pastor Sakramen</th>
+                                                        <td>{{ $pernikahan->klerus->nama ?? '-' }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Izin Beda Agama/Gereja</th>
+                                                        <td>
+                                                            <span class="badge {{ $pernikahan->pernikahan && $pernikahan->pernikahan->izin_beda_gereja ? 'bg-light-warning text-warning' : 'bg-light-secondary text-secondary' }}">
+                                                                {{ $pernikahan->pernikahan && $pernikahan->pernikahan->izin_beda_gereja ? 'Ya' : 'Tidak' }}
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Dispensasi</th>
+                                                        <td>
+                                                            <span class="badge {{ $pernikahan->pernikahan && $pernikahan->pernikahan->dispensasi ? 'bg-light-warning text-warning' : 'bg-light-secondary text-secondary' }}">
+                                                                {{ $pernikahan->pernikahan && $pernikahan->pernikahan->dispensasi ? 'Ya' : 'Tidak' }}
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Tgl Catatan Sipil</th>
+                                                        <td>{{ $pernikahan->pernikahan && $pernikahan->pernikahan->tanggal_catatan_sipil ? $pernikahan->pernikahan->tanggal_catatan_sipil->format('d M Y') : '-' }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Nomor Surat</th>
+                                                        <td>{{ $pernikahan->nomor_surat ?? '-' }}</td>
+                                                    </tr>
+                                                </table>
+                                            @else
+                                                <p class="text-muted mb-0 small">Belum ada data Sakramen Pernikahan terdaftar.</p>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- MINYAK SUCI --}}
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingMinyakSuci">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMinyakSuci">
+                                            <i class="bi bi-moisture text-secondary me-2"></i>
+                                            Minyak Suci &nbsp;
+                                            @if ($minyakSuciList->isNotEmpty())
+                                                <span class="badge bg-light-success text-success ms-auto">{{ $minyakSuciList->count() }} Kali</span>
+                                            @else
+                                                <span class="badge bg-light-secondary text-secondary ms-auto">Belum Ada Data</span>
+                                            @endif
+                                        </button>
+                                    </h2>
+                                    <div id="collapseMinyakSuci" class="accordion-collapse collapse" data-bs-parent="#accordionSakramen">
+                                        <div class="accordion-body">
+                                            @if ($minyakSuciList->isNotEmpty())
+                                                <div class="table-responsive">
+                                                    <table class="table table-sm table-striped mb-0">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>No</th>
+                                                                <th>Tanggal</th>
+                                                                <th>Tempat</th>
+                                                                <th>Pemberi</th>
+                                                                <th>Sebab/Keterangan</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @foreach ($minyakSuciList as $ms)
+                                                                <tr>
+                                                                    <td>{{ $loop->iteration }}</td>
+                                                                    <td>{{ $ms->tanggal_penerimaan->format('d M Y') }}</td>
+                                                                    <td>{{ $ms->minyakSuci->tempat_terima ?? '-' }}</td>
+                                                                    <td>{{ $ms->minyakSuci->nama_pemberi_lengkap ?? '-' }}</td>
+                                                                    <td>{{ $ms->minyakSuci->keterangan_sebab ?? '-' }}</td>
+                                                                </tr>
+                                                            @endforeach
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            @else
+                                                <p class="text-muted mb-0 small">Belum ada data Sakramen Minyak Suci terdaftar.</p>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 

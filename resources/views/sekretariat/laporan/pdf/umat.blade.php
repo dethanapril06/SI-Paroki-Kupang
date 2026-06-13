@@ -355,20 +355,31 @@
         </table>
     @endif
 
+    @php
+        // Ambil paroki dari variable yang dilempar, atau fallback
+        $currentParoki = $currentParoki ?? null;
+        if (!$currentParoki) {
+            $currentParoki = \App\Models\Paroki::with('klerus')->first();
+        } else {
+            $currentParoki->loadMissing('klerus');
+        }
+        $parokiNamaSign = $currentParoki ? $currentParoki->nama : 'Kathedral Kristus Raja Kupang';
+        $pastorNamaSign = $currentParoki && $currentParoki->klerus ? $currentParoki->klerus->nama : 'RD. GERARDUS DUKA, PR';
+    @endphp
     <div class="footer">
         <table class="footer-table">
             <tr>
                 <td class="text-left">
                     <div style="font-size: 8px; color: #555; margin-top: 40px;">
                         Dicetak pada: {{ date('d/m/Y H:i:s') }}<br>
-                        Sistem Informasi Paroki Katedral Kristus Raja Kupang
+                        Sistem Informasi Paroki {{ $parokiNamaSign }}
                     </div>
                 </td>
                 <td>
                     Kupang, {{ date('d F Y') }}<br>
-                    <strong>Pastor Paroki Katedral Kristus Raja Kupang</strong>
+                    <strong>Pastor Paroki {{ $parokiNamaSign }}</strong>
                     <div class="signature-area"></div>
-                    ( <strong>.............................................</strong> )
+                    ( <strong>{{ $pastorNamaSign }}</strong> )
                 </td>
             </tr>
         </table>

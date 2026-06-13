@@ -49,7 +49,21 @@ class UmatController extends Controller
     public function show(Umat $umat)
     {
         $this->authorizeUmat($umat);
-        $umat->load(['keluarga.kub.wilayah', 'keluarga.kepalaKeluarga', 'user', 'kategorial']);
+        $umat->load([
+            'keluarga.kub.wilayah',
+            'keluarga.kepalaKeluarga',
+            'user',
+            'kategorial',
+            'sakramen.paroki',
+            'sakramen.klerus',
+            'sakramen.baptis.klerus',
+            'sakramen.baptis.bapakBaptis',
+            'sakramen.baptis.ibuBaptis',
+            'sakramen.komuniPertama',
+            'sakramen.krisma.uskup',
+            'sakramen.pernikahan.pasangan',
+            'sakramen.minyakSuci',
+        ]);
         return view('portal.umat.show', compact('umat'));
     }
 

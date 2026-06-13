@@ -47,6 +47,15 @@ class UmatController extends Controller
             'kategorial',
             'kubDiketuai',
             'kategorialDiketuai',
+            'sakramen.paroki',
+            'sakramen.klerus',
+            'sakramen.baptis.klerus',
+            'sakramen.baptis.bapakBaptis',
+            'sakramen.baptis.ibuBaptis',
+            'sakramen.komuniPertama',
+            'sakramen.krisma.uskup',
+            'sakramen.pernikahan.pasangan',
+            'sakramen.minyakSuci',
         ]);
 
         return view('sekretariat.umat.show', compact('umat'));
