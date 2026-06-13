@@ -191,34 +191,53 @@
         <table class="main-table">
             <thead>
                 <tr>
-                    <th width="5%" class="text-center">No</th>
-                    <th width="45%" class="text-left">Nama KUB / Wilayah</th>
-                    <th width="12%" class="text-center">Jumlah KK</th>
-                    <th width="12%" class="text-center">Laki-Laki</th>
-                    <th width="12%" class="text-center">Perempuan</th>
-                    <th width="14%" class="text-center">Total Umat</th>
+                    <th rowspan="2" width="15%" class="text-center">Tingkat</th>
+                    <th rowspan="2" width="45%" class="text-left">Nama Wilayah / KUB</th>
+                    <th rowspan="2" width="16%" class="text-center">Jumlah KK</th>
+                    <th colspan="2" width="24%" class="text-center">Jumlah Umat</th>
+                </tr>
+                <tr>
+                    <th class="text-center">Laki-Laki</th>
+                    <th class="text-center">Perempuan</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach ($kubsData as $index => $kub)
-                    <tr>
-                        <td class="text-center">{{ $index + 1 }}</td>
-                        <td class="text-left">
-                            <strong>{{ $kub->nama }}</strong><br>
-                            <span style="font-size: 7px; color: #555;">{{ $kub->wilayah->nama ?? '-' }}</span>
-                        </td>
-                        <td class="text-center">{{ $kub->total_kk }}</td>
-                        <td class="text-center">{{ $kub->total_laki }}</td>
-                        <td class="text-center">{{ $kub->total_perempuan }}</td>
-                        <td class="text-center" style="font-weight: bold;">{{ $kub->total_umat }}</td>
+                @php
+                    $kubsGrouped = $kubsData->groupBy(function($kub) {
+                        return $kub->wilayah->nama ?? 'Tanpa Wilayah';
+                    });
+                @endphp
+
+                @foreach ($kubsGrouped as $wilayahNama => $kubs)
+                    <!-- Wilayah Row -->
+                    <tr style="background-color: #f2f2f2; font-weight: bold;">
+                        <td class="text-center">Wilayah</td>
+                        <td class="text-left">{{ $wilayahNama }}</td>
+                        <td class="text-center">{{ $kubs->sum('total_kk') }}</td>
+                        <td class="text-center">{{ $kubs->sum('total_laki') }}</td>
+                        <td class="text-center">{{ $kubs->sum('total_perempuan') }}</td>
                     </tr>
+
+                    <!-- KUB Rows under this Wilayah -->
+                    @foreach ($kubs as $subIndex => $kub)
+                        <tr>
+                            <td class="text-center" style="color: #555;">KUB</td>
+                            <td class="text-left" style="padding-left: 15px;">
+                                {{ ($subIndex + 1) . '. ' . $kub->nama }}
+                            </td>
+                            <td class="text-center">{{ $kub->total_kk }}</td>
+                            <td class="text-center">{{ $kub->total_laki }}</td>
+                            <td class="text-center">{{ $kub->total_perempuan }}</td>
+                        </tr>
+                    @endforeach
                 @endforeach
-                <tr style="background-color: #f2f2f2; font-weight: bold;">
+
+                <!-- Total Paroki Row -->
+                <tr style="background-color: #e6e6e6; font-weight: bold;">
                     <td colspan="2" class="text-right">TOTAL PAROKI :</td>
                     <td class="text-center">{{ $statsSummary['total_kk'] }}</td>
                     <td class="text-center">{{ $statsSummary['total_laki'] }}</td>
                     <td class="text-center">{{ $statsSummary['total_perempuan'] }}</td>
-                    <td class="text-center">{{ $statsSummary['total_umat'] }}</td>
                 </tr>
             </tbody>
         </table>

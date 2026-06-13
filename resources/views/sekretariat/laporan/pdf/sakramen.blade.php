@@ -347,37 +347,69 @@
         <table class="main-table">
             <thead>
                 <tr>
-                    <th width="5%" class="text-center">No</th>
-                    <th width="35%" class="text-left">Nama KUB / Wilayah</th>
-                    <th width="15%" class="text-center">Total Umat</th>
-                    <th width="15%" class="text-center">Belum Baptis</th>
-                    <th width="15%" class="text-center">Belum Komuni I</th>
-                    <th width="15%" class="text-center">Belum Krisma</th>
+                    <th rowspan="2" width="12%" class="text-center">Tingkat</th>
+                    <th rowspan="2" width="40%" class="text-left">Nama Wilayah / KUB</th>
+                    <th rowspan="2" width="15%" class="text-center">Total Umat</th>
+                    <th colspan="3" width="33%" class="text-center">Belum Menerima Sakramen</th>
+                </tr>
+                <tr>
+                    <th class="text-center">Baptis</th>
+                    <th class="text-center">Komuni I</th>
+                    <th class="text-center">Krisma</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach ($kubsData as $index => $kub)
-                    <tr>
-                        <td class="text-center">{{ $index + 1 }}</td>
-                        <td class="text-left">
-                            <strong>{{ $kub->nama }}</strong><br>
-                            <span style="font-size: 7px; color: #555;">{{ $kub->wilayah->nama ?? '-' }}</span>
-                        </td>
-                        <td class="text-center">{{ $kub->total_umat }}</td>
-                        <td class="text-center"
-                            style="{{ $kub->belum_baptis > 0 ? 'font-weight: bold; color: red;' : '' }}">
-                            {{ $kub->belum_baptis }}
-                        </td>
-                        <td class="text-center"
-                            style="{{ $kub->belum_komuni > 0 ? 'font-weight: bold; color: red;' : '' }}">
-                            {{ $kub->belum_komuni }}
-                        </td>
-                        <td class="text-center"
-                            style="{{ $kub->belum_krisma > 0 ? 'font-weight: bold; color: red;' : '' }}">
-                            {{ $kub->belum_krisma }}
-                        </td>
+                @php
+                    $kubsGrouped = $kubsData->sortBy(function($kub) {
+                        return ($kub->wilayah->nama ?? '') . ' - ' . $kub->nama;
+                    })->groupBy(function($kub) {
+                        return $kub->wilayah->nama ?? 'Tanpa Wilayah';
+                    });
+                @endphp
+
+                @foreach ($kubsGrouped as $wilayahNama => $kubs)
+                    <!-- Wilayah Row -->
+                    <tr style="background-color: #f2f2f2; font-weight: bold;">
+                        <td class="text-center">Wilayah</td>
+                        <td class="text-left">{{ $wilayahNama }}</td>
+                        <td class="text-center">{{ $kubs->sum('total_umat') }}</td>
+                        <td class="text-center">{{ $kubs->sum('belum_baptis') }}</td>
+                        <td class="text-center">{{ $kubs->sum('belum_komuni') }}</td>
+                        <td class="text-center">{{ $kubs->sum('belum_krisma') }}</td>
                     </tr>
+
+                    <!-- KUB Rows under this Wilayah -->
+                    @foreach ($kubs as $subIndex => $kub)
+                        <tr>
+                            <td class="text-center" style="color: #555;">KUB</td>
+                            <td class="text-left" style="padding-left: 15px;">
+                                {{ ($subIndex + 1) . '. ' . $kub->nama }}
+                            </td>
+                            <td class="text-center">{{ $kub->total_umat }}</td>
+                            <td class="text-center"
+                                style="{{ $kub->belum_baptis > 0 ? 'font-weight: bold; color: red;' : '' }}">
+                                {{ $kub->belum_baptis }}
+                            </td>
+                            <td class="text-center"
+                                style="{{ $kub->belum_komuni > 0 ? 'font-weight: bold; color: red;' : '' }}">
+                                {{ $kub->belum_komuni }}
+                            </td>
+                            <td class="text-center"
+                                style="{{ $kub->belum_krisma > 0 ? 'font-weight: bold; color: red;' : '' }}">
+                                {{ $kub->belum_krisma }}
+                            </td>
+                        </tr>
+                    @endforeach
                 @endforeach
+
+                <!-- Total Paroki Row -->
+                <tr style="background-color: #e6e6e6; font-weight: bold;">
+                    <td colspan="2" class="text-right">TOTAL PAROKI :</td>
+                    <td class="text-center">{{ $kubsData->sum('total_umat') }}</td>
+                    <td class="text-center">{{ $kubsData->sum('belum_baptis') }}</td>
+                    <td class="text-center">{{ $kubsData->sum('belum_komuni') }}</td>
+                    <td class="text-center">{{ $kubsData->sum('belum_krisma') }}</td>
+                </tr>
             </tbody>
         </table>
     @endif

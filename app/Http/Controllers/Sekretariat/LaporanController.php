@@ -227,7 +227,9 @@ class LaporanController extends Controller
                 $kub->total_umat = $laki + $perempuan;
 
                 return $kub;
-            });
+            })->sortBy(function ($kub) {
+                return ($kub->wilayah->nama ?? '') . ' - ' . $kub->nama;
+            })->values();
 
             // Summary total paroki
             $statsSummary = [
