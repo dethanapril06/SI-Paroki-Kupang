@@ -28,6 +28,23 @@ class KlerusSeeder extends Seeder
             'jabatan' => 'uskup',
             'status_aktif' => 'Aktif',
         ]);
+
+        // Hubungkan pastor ke kategorial untuk data uji
+        $pastorYohanes = Klerus::where('nama', 'Pastor Yohanes')->first();
+        if ($pastorYohanes) {
+            $misdinar = \App\Models\Kategorial::where('nama', 'Misdinar')->first();
+            if ($misdinar) {
+                $misdinar->update(['klerus_id' => $pastorYohanes->id]);
+            }
+        }
+
+        $pastorMarkus = Klerus::where('nama', 'Pastor Markus')->first();
+        if ($pastorMarkus) {
+            $omk = \App\Models\Kategorial::where('nama', 'OMK')->first();
+            if ($omk) {
+                $omk->update(['klerus_id' => $pastorMarkus->id]);
+            }
+        }
     }
 
     private function createKlerusWithAccount(array $klerusData, string $email): Klerus

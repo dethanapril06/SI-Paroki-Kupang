@@ -33,6 +33,12 @@ class Klerus extends Model
         return $this->hasMany(Kuasi::class);
     }
 
+    /** Kelompok kategorial yang dimoderatori oleh klerus ini */
+    public function kategorial(): HasOne
+    {
+        return $this->hasOne(Kategorial::class, 'klerus_id');
+    }
+
     /** Akun user pastor yang terhubung ke klerus ini */
     public function user(): HasOne
     {

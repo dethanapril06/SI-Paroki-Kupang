@@ -22,6 +22,7 @@ class KategorialController extends Controller
     {
         $umat = auth()->user()->umat;
         $kategorialList = Kategorial::where('ketua_umat_id', $umat?->id)
+            ->with(['klerus'])
             ->withCount(['anggota as anggota_aktif' => fn($q) => $q->where('anggota_kategorial.status', 'Aktif')])
             ->get();
         return view('portal.kategorial.index', compact('kategorialList'));
@@ -30,7 +31,7 @@ class KategorialController extends Controller
     public function show(Kategorial $kategorial): View
     {
         $this->ownedOrFail($kategorial);
-        $kategorial->load(['anggota' => fn($q) => $q->orderByPivot('jabatan')]);
+        $kategorial->load(['anggota' => fn($q) => $q->orderByPivot('jabatan'), 'klerus']);
         $umatTersedia = Umat::aktif()
             ->where('status_almarhum', false)
             ->whereNotIn('id', $kategorial->anggota->pluck('id'))

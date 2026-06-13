@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Sekretariat;
 
 use App\Http\Controllers\Controller;
 use App\Models\Kategorial;
+use App\Models\Klerus;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -12,7 +13,7 @@ class KategorialController extends Controller
 {
     public function index()
     {
-        $kategorial = Kategorial::with(['ketuaUmat'])
+        $kategorial = Kategorial::with(['ketuaUmat', 'klerus'])
             ->withCount('anggota')
             ->latest()
             ->get();
@@ -22,13 +23,19 @@ class KategorialController extends Controller
 
     public function create()
     {
-        return view('sekretariat.kategorial.create');
+        $pastors = Klerus::where('jabatan', 'pastor')
+            ->where('status_aktif', 'Aktif')
+            ->orderBy('nama')
+            ->get();
+
+        return view('sekretariat.kategorial.create', compact('pastors'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nama' => ['required', 'string', 'max:255'],
+            'nama'      => ['required', 'string', 'max:255'],
+            'klerus_id' => ['nullable', 'exists:klerus,id'],
         ]);
 
         Kategorial::create($validated);
@@ -53,7 +60,12 @@ class KategorialController extends Controller
         // Hanya anggota yang terdaftar di kategorial ini yang bisa jadi ketua
         $anggota = $kategorial->anggota()->orderBy('nama')->get();
 
-        return view('sekretariat.kategorial.edit', compact('kategorial', 'anggota'));
+        $pastors = Klerus::where('jabatan', 'pastor')
+            ->where('status_aktif', 'Aktif')
+            ->orderBy('nama')
+            ->get();
+
+        return view('sekretariat.kategorial.edit', compact('kategorial', 'anggota', 'pastors'));
     }
 
     public function update(Request $request, Kategorial $kategorial)
@@ -61,6 +73,7 @@ class KategorialController extends Controller
         $validated = $request->validate([
             'nama'          => ['required', 'string', 'max:255'],
             'ketua_umat_id' => ['nullable', 'exists:umat,id'],
+            'klerus_id'     => ['nullable', 'exists:klerus,id'],
         ]);
 
         $oldKetuaId = $kategorial->getOriginal('ketua_umat_id');

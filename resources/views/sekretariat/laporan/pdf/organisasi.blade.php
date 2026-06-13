@@ -215,9 +215,10 @@
             <thead>
                 <tr>
                     <th width="6%" class="text-center">No</th>
-                    <th width="44%" class="text-left">Nama Kelompok Kategorial</th>
-                    <th width="30%" class="text-left">Nama Ketua Kelompok</th>
-                    <th width="20%" class="text-center">Jumlah Anggota Aktif</th>
+                    <th width="34%" class="text-left">Nama Kelompok Kategorial</th>
+                    <th width="25%" class="text-left">Nama Ketua Kelompok</th>
+                    <th width="20%" class="text-left">Pastor Moderator</th>
+                    <th width="15%" class="text-center">Jumlah Anggota Aktif</th>
                 </tr>
             </thead>
             <tbody>
@@ -226,6 +227,7 @@
                         <td class="text-center">{{ $index + 1 }}</td>
                         <td class="text-left"><strong>{{ $kat->nama }}</strong></td>
                         <td class="text-left">{{ $kat->ketuaUmat ? $kat->ketuaUmat->nama : 'Belum Ditentukan' }}</td>
+                        <td class="text-left">{{ $kat->klerus ? $kat->klerus->nama : 'Belum Ditentukan' }}</td>
                         <td class="text-center"><strong>{{ $kat->anggota_aktif_count }} Umat</strong></td>
                     </tr>
                 @empty
@@ -250,6 +252,11 @@
                     <td><strong>Ketua Kelompok</strong></td>
                     <td>:</td>
                     <td>{{ $filters['ketua'] }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Pastor Moderator</strong></td>
+                    <td>:</td>
+                    <td>{{ $filters['pastor_moderator'] }}</td>
                 </tr>
                 <tr>
                     <td><strong>Status Roster</strong></td>

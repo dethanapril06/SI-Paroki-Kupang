@@ -13,7 +13,7 @@ class KategorialController extends Controller
      */
     public function index(): View
     {
-        $kategorial = Kategorial::with(['ketuaUmat'])
+        $kategorial = Kategorial::with(['ketuaUmat', 'klerus'])
             ->withCount('anggota')
             ->latest()
             ->get();

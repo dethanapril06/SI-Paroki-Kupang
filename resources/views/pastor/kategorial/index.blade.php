@@ -63,6 +63,18 @@
                                         <span class="text-muted font-italic"><i class="bi bi-exclamation-circle me-1"></i>Belum ditentukan</span>
                                     @endif
                                 </div>
+
+                                <div class="bg-light p-3 rounded mb-2 mt-2">
+                                    <small class="text-muted d-block uppercase fw-bold font-monospace text-xs mb-1">Pastor Moderator</small>
+                                    @if ($k->klerus)
+                                        <span class="fw-bold d-flex align-items-center gap-2">
+                                            <i class="bi bi-person-badge-fill text-primary"></i>
+                                            <span>{{ $k->klerus->nama }}</span>
+                                        </span>
+                                    @else
+                                        <span class="text-muted font-italic"><i class="bi bi-exclamation-circle me-1"></i>Belum ditentukan</span>
+                                    @endif
+                                </div>
                             </div>
                             <div class="card-footer bg-light py-2 d-flex justify-content-between align-items-center">
                                 <span class="text-xs text-muted">Paroki Kupang</span>

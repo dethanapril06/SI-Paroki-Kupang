@@ -61,6 +61,21 @@
                                         @error('nama') <div class="invalid-feedback">{{ $message }}</div> @enderror
                                     </div>
                                 </div>
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="klerus_id">Pastor Moderator</label>
+                                        <select class="form-select @error('klerus_id') is-invalid @enderror"
+                                            id="klerus_id" name="klerus_id">
+                                            <option value="">-- Pilih Pastor Moderator --</option>
+                                            @foreach ($pastors as $pastor)
+                                                <option value="{{ $pastor->id }}" {{ old('klerus_id') == $pastor->id ? 'selected' : '' }}>
+                                                    {{ $pastor->nama }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @error('klerus_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                    </div>
+                                </div>
                                 <div class="col-12 d-flex justify-content-end">
                                     <a href="{{ route('sekretariat.kategorial.index') }}"
                                         class="btn btn-light-secondary me-1 mb-1">Batal</a>

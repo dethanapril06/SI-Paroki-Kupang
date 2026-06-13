@@ -14,12 +14,18 @@ class Kategorial extends Model
 
     protected $table = 'kategorial';
 
-    protected $fillable = ['nama', 'ketua_umat_id'];
+    protected $fillable = ['nama', 'ketua_umat_id', 'klerus_id'];
 
     /** Ketua Kategorial (seorang umat) */
     public function ketuaUmat(): BelongsTo
     {
         return $this->belongsTo(Umat::class, 'ketua_umat_id');
+    }
+
+    /** Pastor Moderator (seorang klerus dengan jabatan pastor) */
+    public function klerus(): BelongsTo
+    {
+        return $this->belongsTo(Klerus::class, 'klerus_id');
     }
 
     /** Data anggota kategorial sebagai model pivot */

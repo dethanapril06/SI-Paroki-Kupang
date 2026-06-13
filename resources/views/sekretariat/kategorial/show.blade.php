@@ -61,6 +61,16 @@
                             </td>
                         </tr>
                         <tr>
+                            <th>Pastor Moderator</th>
+                            <td>
+                                @if ($kategorial->klerus)
+                                    <strong>{{ $kategorial->klerus->nama }}</strong>
+                                @else
+                                    <span class="badge bg-warning text-dark">Belum diset</span>
+                                @endif
+                            </td>
+                        </tr>
+                        <tr>
                             <th>Jumlah Anggota</th>
                             <td><span class="badge bg-primary">{{ $kategorial->anggota->count() }} orang</span></td>
                         </tr>

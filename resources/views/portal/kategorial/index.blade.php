@@ -43,6 +43,11 @@
                                         <small class="text-muted">
                                             {{ $kat->anggota_aktif ?? 0 }} anggota aktif
                                         </small>
+                                        @if ($kat->klerus)
+                                            <small class="text-muted d-block mt-1">
+                                                <i class="bi bi-person-badge-fill me-1"></i>Moderator: {{ $kat->klerus->nama }}
+                                            </small>
+                                        @endif
                                     </div>
                                 </div>
                             </div>

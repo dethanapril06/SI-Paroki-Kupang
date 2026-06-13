@@ -538,7 +538,7 @@ class LaporanController extends Controller
 
         } elseif ($subReport === 'rekap_kategorial') {
             // Rekapitulasi Kelompok Kategorial
-            $kategorialList = Kategorial::with('ketuaUmat')
+            $kategorialList = Kategorial::with(['ketuaUmat', 'klerus'])
                 ->withCount([
                     'anggota as anggota_aktif_count' => fn($q) => $q->where('status', 'Aktif')
                 ])->orderBy('nama')->get();
@@ -559,6 +559,8 @@ class LaporanController extends Controller
                 return back()->with('error', 'Kelompok Kategorial harus dipilih untuk melihat daftar anggota detail.');
             }
 
+            $selectedKategorial->load('klerus');
+
             // Ambil anggota kategorial dari relation BelongsToMany beserta pivot
             $anggotaList = $selectedKategorial->anggota()
                 ->with('keluarga.kub')
@@ -571,6 +573,7 @@ class LaporanController extends Controller
                 'judul' => 'Daftar Roster Pengurus & Anggota Kelompok: ' . $selectedKategorial->nama,
                 'kategorial_nama' => $selectedKategorial->nama,
                 'ketua' => $selectedKategorial->ketuaUmat ? $selectedKategorial->ketuaUmat->nama : 'Belum Ditentukan',
+                'pastor_moderator' => $selectedKategorial->klerus ? $selectedKategorial->klerus->nama : 'Belum Ditentukan',
             ];
 
             $pdf = Pdf::loadView('sekretariat.laporan.pdf.organisasi', array_merge(compact('anggotaList', 'filters'), $pdfLogos))

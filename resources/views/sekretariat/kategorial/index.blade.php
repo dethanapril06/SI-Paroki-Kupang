@@ -49,6 +49,7 @@
                                     <th>No</th>
                                     <th>Nama Kategorial</th>
                                     <th>Ketua</th>
+                                    <th>Pastor Moderator</th>
                                     <th>Jumlah Anggota</th>
                                     <th>Aksi</th>
                                 </tr>
@@ -61,6 +62,13 @@
                                         <td>
                                             @if ($item->ketuaUmat)
                                                 {{ $item->ketuaUmat->nama }}
+                                            @else
+                                                <span class="badge bg-warning text-dark">Belum diset</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if ($item->klerus)
+                                                {{ $item->klerus->nama }}
                                             @else
                                                 <span class="badge bg-warning text-dark">Belum diset</span>
                                             @endif
@@ -92,7 +100,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="5" class="text-center text-muted">Belum ada data kategorial.</td>
+                                        <td colspan="6" class="text-center text-muted">Belum ada data kategorial.</td>
                                     </tr>
                                 @endforelse
                             </tbody>
