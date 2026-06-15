@@ -14,6 +14,7 @@ return [
     'show_warnings' => false,   // Throw an Exception on warnings from dompdf
 
     'public_path' => null,  // Override the public path if needed
+    // public_path => env('DOMPDF_PUBLIC_PATH', '/home/weddinv1/si-paroki.weddinvite.my.id/'),
 
     'logo_kiri_path' => env('PDF_LOGO_KIRI_PATH', public_path('images/Kiri.jpeg')),
     'logo_kanan_path' => env('PDF_LOGO_KANAN_PATH', public_path('images/Kanan.jpeg')),
