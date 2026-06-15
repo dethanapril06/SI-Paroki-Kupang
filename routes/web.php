@@ -27,6 +27,7 @@ use App\Http\Controllers\Sekretariat\PernikahanController;
 use App\Http\Controllers\Sekretariat\SakramenController;
 use App\Http\Controllers\Sekretariat\StasiController;
 use App\Http\Controllers\Sekretariat\UmatController;
+use App\Http\Controllers\Sekretariat\ImportController;
 use App\Http\Controllers\Sekretariat\WilayahController;
 
 // Portal (Umat / Ketua KUB / Ketua Kategorial)
@@ -145,6 +146,13 @@ Route::middleware(['auth', 'role:sekretariat'])
                     'update'  => 'keanggotaan.update',
                     'destroy' => 'keanggotaan.destroy',
                 ]);
+        });
+
+        // Import Data
+        Route::prefix('import')->name('import.')->group(function () {
+            Route::get('/', [ImportController::class, 'index'])->name('index');
+            Route::get('/template/{jenis}', [ImportController::class, 'downloadTemplate'])->name('template');
+            Route::post('/{jenis}', [ImportController::class, 'import'])->name('proses');
         });
 
         // Laporan & Cetak PDF (Read-only)

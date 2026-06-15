@@ -19,11 +19,6 @@ class ParokiSeeder extends Seeder
                 'alamat' => 'Kupang', 
                 'keuskupan_id' => $keuskupan->id, 
             ],
-            [
-                'nama' => 'test', 
-                'alamat' => 'test', 
-                'keuskupan_id' => $keuskupan->id, 
-            ],
         ];
 
         foreach ($parokiData as $data) {

@@ -17,10 +17,6 @@ class KeuskupanSeeder extends Seeder
                 'nama' => 'Keuskupan Agung Kupang', 
                 'alamat' => 'Jl. El Tari No. 1, Kupang', 
             ],
-            [
-                'nama' => 'test', 
-                'alamat' => 'test', 
-            ],
 
         ];
 

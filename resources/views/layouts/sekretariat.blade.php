@@ -255,6 +255,12 @@
                                 </li>
                             </ul>
                         </li>
+                        <li class="sidebar-item {{ request()->routeIs('sekretariat.import.*') ? 'active' : '' }}">
+                            <a href="{{ route('sekretariat.import.index') }}" class="sidebar-link">
+                                <i class="bi bi-file-earmark-arrow-up-fill"></i>
+                                <span>Import Data</span>
+                            </a>
+                        </li>
                         <li class="sidebar-item {{ request()->routeIs('sekretariat.laporan.*') ? 'active' : '' }}">
                             <a href="{{ route('sekretariat.laporan.index') }}" class="sidebar-link">
                                 <i class="bi bi-file-earmark-pdf-fill"></i>

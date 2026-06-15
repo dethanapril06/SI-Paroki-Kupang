@@ -18,6 +18,7 @@ class Sakramen extends Model
         'tanggal_penerimaan',
         'paroki_id',
         'klerus_id',
+        'nomor_surat',
     ];
 
     protected $casts = [
