@@ -98,29 +98,9 @@
                                     {{-- Jenis & Tanggal --}}
                                     <div class="col-12 col-md-6">
                                         <div class="form-group">
-                                            <label for="sub_jenis">Jenis Pindah <span class="text-danger">*</span></label>
-                                            <select class="form-select @error('sub_jenis') is-invalid @enderror"
-                                                id="sub_jenis" name="sub_jenis" onchange="onJenisChange()">
-                                                <option value="">-- Pilih Jenis --</option>
-                                                <option value="pindah_keluarga"
-                                                    {{ old('sub_jenis', $mutasiUmat->sub_jenis) === 'pindah_keluarga' ? 'selected' : '' }}>
-                                                    Pindah Keluarga</option>
-                                                <option value="kub"
-                                                    {{ old('sub_jenis', $mutasiUmat->sub_jenis) === 'kub' ? 'selected' : '' }}>
-                                                    Pindah KUB</option>
-                                                <option value="wilayah"
-                                                    {{ old('sub_jenis', $mutasiUmat->sub_jenis) === 'wilayah' ? 'selected' : '' }}>
-                                                    Pindah Wilayah</option>
-                                                <option value="paroki"
-                                                    {{ old('sub_jenis', $mutasiUmat->sub_jenis) === 'paroki' ? 'selected' : '' }}>
-                                                    Pindah Paroki</option>
-                                                <option value="keuskupan"
-                                                    {{ old('sub_jenis', $mutasiUmat->sub_jenis) === 'keuskupan' ? 'selected' : '' }}>
-                                                    Pindah Keuskupan</option>
-                                            </select>
-                                            @error('sub_jenis')
-                                                <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
+                                            <label for="sub_jenis_text">Jenis Pindah</label>
+                                            <input type="text" class="form-control" id="sub_jenis_text" value="Pindah ke Keluarga yang Ada" readonly disabled>
+                                            <input type="hidden" name="sub_jenis" id="sub_jenis" value="pindah_keluarga_ada">
                                         </div>
                                     </div>
 
@@ -152,9 +132,9 @@
                                     </div>
 
                                     {{-- Pindah Keluarga --}}
-                                    <div class="col-12 d-none" id="wrap-pindah-keluarga">
+                                    <div class="col-12" id="wrap-pindah-keluarga">
                                         <div class="form-group">
-                                            <label for="keluarga_tujuan_id">Keluarga Tujuan</label>
+                                            <label for="keluarga_tujuan_id">Keluarga Tujuan <span class="text-danger">*</span></label>
                                             <select class="form-select @error('keluarga_tujuan_id') is-invalid @enderror"
                                                 id="keluarga_tujuan_id" name="keluarga_tujuan_id">
                                                 <option value="">-- Pilih --</option>
@@ -166,83 +146,6 @@
                                                 @endforeach
                                             </select>
                                             @error('keluarga_tujuan_id')
-                                                <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                    </div>
-
-                                    {{-- Keuskupan Tujuan --}}
-                                    <div class="col-12 d-none" id="wrap-keuskupan">
-                                        <div class="form-group">
-                                            <label for="keuskupan_tujuan_id">Keuskupan Tujuan</label>
-                                            <select class="form-select @error('keuskupan_tujuan_id') is-invalid @enderror"
-                                                id="keuskupan_tujuan_id" name="keuskupan_tujuan_id">
-                                                <option value="">-- Pilih --</option>
-                                                @foreach ($keuskupanList as $ks)
-                                                    <option value="{{ $ks->id }}"
-                                                        {{ old('keuskupan_tujuan_id', $mutasiUmat->keuskupan_tujuan_id) == $ks->id ? 'selected' : '' }}>
-                                                        {{ $ks->nama }}</option>
-                                                @endforeach
-                                            </select>
-                                            @error('keuskupan_tujuan_id')
-                                                <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                    </div>
-
-                                    {{-- Paroki Tujuan --}}
-                                    <div class="col-12 d-none" id="wrap-paroki">
-                                        <div class="form-group">
-                                            <label for="paroki_tujuan_id">Paroki Tujuan</label>
-                                            <select class="form-select @error('paroki_tujuan_id') is-invalid @enderror"
-                                                id="paroki_tujuan_id" name="paroki_tujuan_id">
-                                                <option value="">-- Pilih --</option>
-                                                @foreach ($parokiList as $p)
-                                                    <option value="{{ $p->id }}"
-                                                        {{ old('paroki_tujuan_id', $mutasiUmat->paroki_tujuan_id) == $p->id ? 'selected' : '' }}>
-                                                        {{ $p->nama }}</option>
-                                                @endforeach
-                                            </select>
-                                            @error('paroki_tujuan_id')
-                                                <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                    </div>
-
-                                    {{-- Wilayah Tujuan --}}
-                                    <div class="col-12 d-none" id="wrap-wilayah">
-                                        <div class="form-group">
-                                            <label for="wilayah_tujuan_id">Wilayah Tujuan</label>
-                                            <select class="form-select @error('wilayah_tujuan_id') is-invalid @enderror"
-                                                id="wilayah_tujuan_id" name="wilayah_tujuan_id"
-                                                onchange="onWilayahChange()">
-                                                <option value="">-- Pilih --</option>
-                                                @foreach ($wilayahList as $w)
-                                                    <option value="{{ $w->id }}"
-                                                        {{ old('wilayah_tujuan_id', $mutasiUmat->wilayah_tujuan_id) == $w->id ? 'selected' : '' }}>
-                                                        {{ $w->nama }}</option>
-                                                @endforeach
-                                            </select>
-                                            @error('wilayah_tujuan_id')
-                                                <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                    </div>
-
-                                    {{-- KUB Tujuan --}}
-                                    <div class="col-12 d-none" id="wrap-kub">
-                                        <div class="form-group">
-                                            <label for="kub_tujuan_id">KUB Tujuan</label>
-                                            <select class="form-select @error('kub_tujuan_id') is-invalid @enderror"
-                                                id="kub_tujuan_id" name="kub_tujuan_id">
-                                                <option value="">-- Pilih --</option>
-                                                @foreach ($kubList as $kub)
-                                                    <option value="{{ $kub->id }}"
-                                                        {{ old('kub_tujuan_id', $mutasiUmat->kub_tujuan_id) == $kub->id ? 'selected' : '' }}>
-                                                        {{ $kub->nama }}</option>
-                                                @endforeach
-                                            </select>
-                                            @error('kub_tujuan_id')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
@@ -289,28 +192,8 @@
                 document.getElementById('asal-keuskupan').textContent = h.keuskupan_nama || '-';
             }
 
-            function onJenisChange() {
-                const jenis = document.getElementById('sub_jenis').value;
-                ['wrap-pindah-keluarga', 'wrap-keuskupan', 'wrap-paroki'].forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) el.classList.add('d-none');
-                });
-
-                if (jenis === 'pindah_keluarga_ada' || jenis === 'pindah_keluarga_baru') {
-                    const el = document.getElementById('wrap-pindah-keluarga');
-                    if (el) el.classList.remove('d-none');
-                } else if (jenis === 'paroki') {
-                    const el = document.getElementById('wrap-paroki');
-                    if (el) el.classList.remove('d-none');
-                } else if (jenis === 'keuskupan') {
-                    const el = document.getElementById('wrap-keuskupan');
-                    if (el) el.classList.remove('d-none');
-                }
-            }
-
-            document.addEventListener('DOMContentLoaded', function() {
+             document.addEventListener('DOMContentLoaded', function() {
                 onUmatChange();
-                onJenisChange();
             });
         </script>
     @endpush

@@ -151,7 +151,6 @@ class KubController extends Controller
 
         // 3. Cek Mutasi Umat
         $hasMutasiUmat = MutasiUmat::where('kub_asal_id', $kub->id)
-            ->orWhere('kub_tujuan_id', $kub->id)
             ->exists();
         if ($hasMutasiUmat) {
             return back()->with('error', 'KUB "' . $kub->nama . '" tidak dapat dihapus karena masih terhubung dengan riwayat mutasi umat.');

@@ -134,7 +134,6 @@ class WilayahController extends Controller
 
         // 3. Cek Mutasi Umat
         $hasMutasiUmat = MutasiUmat::where('wilayah_asal_id', $wilayah->id)
-            ->orWhere('wilayah_tujuan_id', $wilayah->id)
             ->exists();
         if ($hasMutasiUmat) {
             return back()->with('error', 'Wilayah "' . $wilayah->nama . '" tidak dapat dihapus karena masih terhubung dengan riwayat mutasi umat.');

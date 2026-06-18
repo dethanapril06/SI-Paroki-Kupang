@@ -26,9 +26,7 @@ class MutasiUmat extends Model
         'keluarga_asal_id',
         'keluarga_tujuan_id',
         'kub_asal_id',
-        'kub_tujuan_id',
         'wilayah_asal_id',
-        'wilayah_tujuan_id',
         'paroki_asal_id',
         'paroki_tujuan_id',
         'keuskupan_asal_id',
@@ -83,19 +81,9 @@ class MutasiUmat extends Model
         return $this->belongsTo(Kub::class, 'kub_asal_id');
     }
 
-    public function kubTujuan(): BelongsTo
-    {
-        return $this->belongsTo(Kub::class, 'kub_tujuan_id');
-    }
-
     public function wilayahAsal(): BelongsTo
     {
         return $this->belongsTo(Wilayah::class, 'wilayah_asal_id');
-    }
-
-    public function wilayahTujuan(): BelongsTo
-    {
-        return $this->belongsTo(Wilayah::class, 'wilayah_tujuan_id');
     }
 
     public function parokiAsal(): BelongsTo
