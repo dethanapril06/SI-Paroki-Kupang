@@ -14,7 +14,7 @@ class UmatTemplateExport extends BaseTemplateExport
             'hubungan_keluarga', 'nama_ayah', 'nama_ibu',
             'status_pernikahan', 'no_telepon', 'golongan_darah',
             'pendidikan', 'pekerjaan', 'penyandang_disabilitas',
-            'status_keaktifan', 'keterangan_lain',
+            'status_keaktifan', 'keterangan_lain', 'email',
         ];
     }
 
@@ -39,6 +39,7 @@ class UmatTemplateExport extends BaseTemplateExport
             'Tidak',
             'aktif',
             '',
+            'yohanes.belo@gmail.com',
         ];
     }
 
@@ -63,6 +64,7 @@ class UmatTemplateExport extends BaseTemplateExport
             'penyandang_disabilitas' => '"Ya" atau "Tidak".',
             'status_keaktifan'       => '"aktif" atau "non-aktif". Default: aktif.',
             'keterangan_lain'        => 'Keterangan tambahan (opsional).',
+            'email'                  => 'Alamat email untuk login (opsional). Jika diisi, akun login akan dibuat otomatis dengan password default "password".',
         ];
     }
 }

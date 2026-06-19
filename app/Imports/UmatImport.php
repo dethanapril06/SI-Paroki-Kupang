@@ -5,15 +5,17 @@ namespace App\Imports;
 use App\Models\Keluarga;
 use App\Models\Kub;
 use App\Models\Umat;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithStartRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
-use Maatwebsite\Excel\Concerns\WithBatchInserts;
 
-class UmatImport implements ToModel, WithStartRow, WithValidation, SkipsEmptyRows, WithBatchInserts
+class UmatImport implements ToModel, WithStartRow, WithValidation, SkipsEmptyRows
 {
     /*
      * Kolom (index sesuai template):
@@ -35,6 +37,7 @@ class UmatImport implements ToModel, WithStartRow, WithValidation, SkipsEmptyRow
      * 15  = penyandang_disabilitas
      * 16  = status_keaktifan
      * 17  = keterangan_lain
+     * 18  = email
      */
 
     public function startRow(): int
@@ -77,7 +80,7 @@ class UmatImport implements ToModel, WithStartRow, WithValidation, SkipsEmptyRow
             throw new \Exception("Umat \"{$nama}\" (lahir: {$tanggalLahir->toDateString()}) sudah ada dalam keluarga tersebut.");
         }
 
-        return new Umat([
+        $umat = new Umat([
             'keluarga_id'            => $keluarga->id,
             'nama'                   => $nama,
             'tempat_lahir'           => trim($row[4] ?? ''),
@@ -96,6 +99,32 @@ class UmatImport implements ToModel, WithStartRow, WithValidation, SkipsEmptyRow
             'status_keaktifan'       => ($row[16] ?? 'aktif') !== '' ? trim($row[16]) : 'aktif',
             'keterangan_lain'        => $row[17] !== '' ? trim($row[17]) : null,
         ]);
+
+        $umat->save();
+
+        $email = trim($row[18] ?? '');
+        if ($email !== '') {
+            $user = User::create([
+                'name'     => $umat->nama,
+                'email'    => $email,
+                'password' => Hash::make('password'),
+                'umat_id'  => $umat->id,
+                'status'   => 'active',
+            ]);
+
+            // Assign default role 'umat'
+            $roleId = DB::table('roles')->where('name', 'umat')->value('id');
+            if ($roleId) {
+                DB::table('user_roles')->insertOrIgnore([
+                    'user_id'    => $user->id,
+                    'role_id'    => $roleId,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+        }
+
+        return null;
     }
 
     public function rules(): array
@@ -112,6 +141,7 @@ class UmatImport implements ToModel, WithStartRow, WithValidation, SkipsEmptyRow
             '12' => ['nullable', Rule::in(['A', 'B', 'AB', 'O', ''])],
             '13' => ['nullable', Rule::in(['Tidak Sekolah', 'SD', 'SMP', 'SMA', 'D3', 'S1', 'S2', 'S3', ''])],
             '16' => ['nullable', Rule::in(['aktif', 'non-aktif', ''])],
+            '18' => ['nullable', 'email', 'unique:users,email'],
         ];
     }
 
@@ -129,6 +159,7 @@ class UmatImport implements ToModel, WithStartRow, WithValidation, SkipsEmptyRow
             '12' => 'golongan_darah',
             '13' => 'pendidikan',
             '16' => 'status_keaktifan',
+            '18' => 'email',
         ];
     }
 
@@ -148,13 +179,12 @@ class UmatImport implements ToModel, WithStartRow, WithValidation, SkipsEmptyRow
             '10.in'       => 'Kolom "status_pernikahan" tidak valid.',
             '12.in'       => 'Kolom "golongan_darah" harus A, B, AB, atau O.',
             '13.in'       => 'Kolom "pendidikan" tidak valid.',
+            '18.email'    => 'Format email pada kolom "email" tidak valid.',
+            '18.unique'   => 'Email pada kolom "email" sudah digunakan oleh pengguna lain.',
         ];
     }
 
-    public function batchSize(): int
-    {
-        return 100;
-    }
+    // batchSize removed since we do not batch insert anymore
 
     private function parseDate(mixed $value): ?Carbon
     {
