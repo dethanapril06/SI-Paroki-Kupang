@@ -14,30 +14,19 @@
         type="image/png">
 
     <link rel="stylesheet" href="{{ asset('template/assets/extensions/simple-datatables/style.css') }}" />
-    <link rel="stylesheet" href="{{ asset('template/assets/extensions/choices.js/public/assets/styles/choices.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/select2/css/select2.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/select2/css/select2-bootstrap-5-theme.min.css') }}" />
 
     <link rel="stylesheet" crossorigin href="{{ asset('template/assets/compiled/css/table-datatable.css') }}" />
     <link rel="stylesheet" crossorigin href="{{ asset('template/assets/compiled/css/app.css') }}">
     <link rel="stylesheet" crossorigin href="{{ asset('template/assets/compiled/css/app-dark.css') }}">
     <link rel="stylesheet" crossorigin href="{{ asset('template/assets/compiled/css/iconly.css') }}">
     <style>
-        .choices {
-            margin-bottom: 0;
-        }
-
-        .choices__inner {
+        .select2-container--bootstrap-5 .select2-selection {
             min-height: 38px;
-            border-color: var(--bs-border-color);
-            background-color: var(--bs-body-bg);
-            border-radius: .375rem;
         }
 
-        .choices[data-type*=select-one] .choices__inner {
-            padding-bottom: 3.5px;
-        }
-
-        .choices__list--dropdown,
-        .choices__list[aria-expanded] {
+        .select2-container--bootstrap-5 .select2-dropdown {
             z-index: 1060;
         }
     </style>
@@ -344,24 +333,38 @@
 
     <script src="{{ asset('template/assets/extensions/simple-datatables/umd/simple-datatables.js') }}"></script>
     <script src="{{ asset('template/assets/static/js/pages/simple-datatables.js') }}"></script>
-    <script src="{{ asset('template/assets/extensions/choices.js/public/assets/scripts/choices.min.js') }}"></script>
+    <script src="{{ asset('template/assets/extensions/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('vendor/select2/js/select2.full.min.js') }}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            document.querySelectorAll('select[name="umat_id"], select[name="ketua_umat_id"]').forEach(function (select) {
-                if (select.dataset.choicesInitialized === 'true') {
+            $('select[name="umat_id"], select[name="ketua_umat_id"]').each(function () {
+                const $select = $(this);
+
+                if ($select.hasClass('select2-hidden-accessible')) {
                     return;
                 }
 
-                select.dataset.choicesInitialized = 'true';
+                $select.select2({
+                    theme: 'bootstrap-5',
+                    width: '100%',
+                    placeholder: $select.find('option[value=""]').first().text() || 'Pilih umat',
+                    allowClear: !$select.prop('required'),
+                    dropdownParent: $select.closest('.modal').length ? $select.closest('.modal') : $(document.body),
+                    language: {
+                        noResults: function () {
+                            return 'Umat tidak ditemukan';
+                        },
+                        searching: function () {
+                            return 'Mencari...';
+                        },
+                        inputTooShort: function () {
+                            return 'Ketik untuk mencari';
+                        }
+                    }
+                });
 
-                new Choices(select, {
-                    searchEnabled: true,
-                    shouldSort: false,
-                    itemSelectText: '',
-                    searchPlaceholderValue: 'Cari nama umat...',
-                    noResultsText: 'Umat tidak ditemukan',
-                    noChoicesText: 'Tidak ada pilihan',
-                    allowHTML: false
+                $select.on('select2:select select2:clear', function () {
+                    this.dispatchEvent(new Event('change', { bubbles: true }));
                 });
             });
         });
