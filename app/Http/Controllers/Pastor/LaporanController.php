@@ -160,7 +160,7 @@ class LaporanController extends Controller
         $query = Mutasi::with([
             'mutasiUmat.umat',
             'mutasiUmat.kubAsal',
-            'mutasiUmat.kubTujuan',
+            'mutasiUmat.keluargaTujuan.kub',
             'mutasiKeluarga.keluarga.kepalaKeluarga',
             'mutasiKeluarga.kubAsal',
             'mutasiKeluarga.kubTujuan',

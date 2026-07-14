@@ -24,7 +24,9 @@ class SakramenController extends Controller
                 'pernikahan',
                 'minyakSuci',
             ])
-            ->latest('tanggal_penerimaan')
+            ->join('umat', 'sakramen.umat_id', '=', 'umat.id')
+            ->orderBy('umat.nama')
+            ->select('sakramen.*')
             ->paginate(20);
 
         return view('sekretariat.sakramen.index', compact('sakramenList'));

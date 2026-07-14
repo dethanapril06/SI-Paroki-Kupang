@@ -18,6 +18,7 @@ class MutasiController extends Controller
 
         $query = Mutasi::with([
                 'mutasiUmat.umat',
+                'mutasiUmat.keluargaTujuan.kub',
                 'mutasiKeluarga.keluarga',
                 'mutasiAgama.umat',
                 'pemohon',

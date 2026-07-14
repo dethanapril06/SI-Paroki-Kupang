@@ -235,7 +235,7 @@
                     </div>
                 </div>
 
-                <form method="POST" action="{{ route('umat.register.store') }}" id="registerForm">
+                <form method="POST" action="{{ route('umat.register.store') }}" id="registerForm" novalidate>
                     @csrf
 
                     {{-- ====================================================
@@ -370,7 +370,7 @@
                             </div>
                         </div>
 
-                        <button type="button" class="btn btn-primary btn-block btn-lg mt-3" onclick="goToStep(2)">
+                        <button type="button" class="btn btn-primary btn-block btn-lg mt-3" onclick="goToStep(2, true)">
                             Lanjut <i class="bi bi-arrow-right ms-1"></i>
                         </button>
                     </div>
@@ -442,17 +442,17 @@
                             </div>
 
                             <div class="col-6 mb-2">
-                                <label class="form-label" for="no_telepon">No. Telepon</label>
+                                <label class="form-label" for="no_telepon">No. Telepon <span class="text-danger">*</span></label>
                                 <input type="tel" name="no_telepon" id="no_telepon"
                                     class="form-control @error('no_telepon') is-invalid @enderror"
-                                    value="{{ old('no_telepon') }}" placeholder="08xx-xxxx-xxxx">
+                                    value="{{ old('no_telepon') }}" placeholder="08xx-xxxx-xxxx" required>
                                 @error('no_telepon') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
 
                             <div class="col-6 mb-2">
-                                <label class="form-label" for="pendidikan">Pendidikan Terakhir</label>
+                                <label class="form-label" for="pendidikan">Pendidikan Terakhir <span class="text-danger">*</span></label>
                                 <select name="pendidikan" id="pendidikan"
-                                    class="form-select @error('pendidikan') is-invalid @enderror">
+                                    class="form-select @error('pendidikan') is-invalid @enderror" required>
                                     <option value="">--</option>
                                     @foreach (['Tidak Sekolah', 'SD', 'SMP', 'SMA', 'D3', 'S1', 'S2', 'S3'] as $p)
                                         <option value="{{ $p }}" {{ old('pendidikan') == $p ? 'selected' : '' }}>{{ $p }}</option>
@@ -462,10 +462,10 @@
                             </div>
 
                             <div class="col-6 mb-2">
-                                <label class="form-label" for="pekerjaan">Pekerjaan</label>
+                                <label class="form-label" for="pekerjaan">Pekerjaan <span class="text-danger">*</span></label>
                                 <input type="text" name="pekerjaan" id="pekerjaan"
                                     class="form-control @error('pekerjaan') is-invalid @enderror"
-                                    value="{{ old('pekerjaan') }}" placeholder="PNS, Wiraswasta, dll.">
+                                    value="{{ old('pekerjaan') }}" placeholder="PNS, Wiraswasta, dll." required>
                                 @error('pekerjaan') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
                         </div>
@@ -474,7 +474,7 @@
                             <button type="button" class="btn btn-outline-secondary btn-lg flex-fill" onclick="goToStep(1)">
                                 <i class="bi bi-arrow-left me-1"></i> Kembali
                             </button>
-                            <button type="button" class="btn btn-primary btn-lg flex-fill" onclick="goToStep(3)">
+                            <button type="button" class="btn btn-primary btn-lg flex-fill" onclick="goToStep(3, true)">
                                 Lanjut <i class="bi bi-arrow-right ms-1"></i>
                             </button>
                         </div>
@@ -560,10 +560,52 @@
         document.addEventListener('DOMContentLoaded', function () {
             const mode = document.getElementById('keluarga_mode').value || 'baru';
             setKeluargaMode(mode);
+
+            document.querySelectorAll('#registerForm input, #registerForm select, #registerForm textarea').forEach(field => {
+                field.addEventListener('input', () => field.classList.remove('is-invalid'));
+                field.addEventListener('change', () => field.classList.remove('is-invalid'));
+            });
+
+            document.getElementById('registerForm').addEventListener('submit', function (event) {
+                for (let step = 1; step <= totalSteps; step++) {
+                    if (!validateStep(step, false)) {
+                        event.preventDefault();
+                        goToStep(step);
+                        validateStep(step);
+                        return;
+                    }
+                }
+            });
         });
 
         // ── Navigasi step ─────────────────────────────────────────────────────
-        function goToStep(step) {
+        function validateStep(step, showFeedback = true) {
+            const section = document.getElementById('step-' + step);
+            const fields = Array.from(section.querySelectorAll('input, select, textarea'))
+                .filter(field => !field.disabled && field.type !== 'hidden');
+
+            for (const field of fields) {
+                field.classList.remove('is-invalid');
+
+                if (!field.checkValidity()) {
+                    field.classList.add('is-invalid');
+                    if (showFeedback) {
+                        field.reportValidity();
+                        field.focus({ preventScroll: true });
+                        field.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        function goToStep(step, validateBeforeNext = false) {
+            if (validateBeforeNext && step > currentStep && !validateStep(currentStep)) {
+                return;
+            }
+
             document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.step-item').forEach(s => s.classList.remove('active', 'done'));
 

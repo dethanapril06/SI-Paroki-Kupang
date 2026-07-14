@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use LogicException;
 
 class MutasiUmat extends Model
@@ -74,6 +75,18 @@ class MutasiUmat extends Model
     public function keluargaTujuan(): BelongsTo
     {
         return $this->belongsTo(Keluarga::class, 'keluarga_tujuan_id');
+    }
+
+    public function kubTujuan(): HasOneThrough
+    {
+        return $this->hasOneThrough(
+            Kub::class,
+            Keluarga::class,
+            'id',
+            'id',
+            'keluarga_tujuan_id',
+            'kub_id'
+        );
     }
 
     public function kubAsal(): BelongsTo

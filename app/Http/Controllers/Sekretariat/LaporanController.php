@@ -405,7 +405,7 @@ class LaporanController extends Controller
                 ->with([
                     'mutasiUmat.umat', 
                     'mutasiUmat.kubAsal', 
-                    'mutasiUmat.kubTujuan',
+                    'mutasiUmat.keluargaTujuan.kub',
                     'mutasiKeluarga.keluarga.kepalaKeluarga',
                     'mutasiKeluarga.kubAsal',
                     'mutasiKeluarga.kubTujuan'
@@ -472,7 +472,7 @@ class LaporanController extends Controller
                 ->with([
                     'mutasiUmat.umat',
                     'mutasiUmat.kubAsal',
-                    'mutasiUmat.kubTujuan',
+                    'mutasiUmat.keluargaTujuan.kub',
                     'mutasiKeluarga.keluarga.kepalaKeluarga',
                     'mutasiKeluarga.kubAsal',
                     'mutasiKeluarga.kubTujuan',
