@@ -14,11 +14,33 @@
         type="image/png">
 
     <link rel="stylesheet" href="{{ asset('template/assets/extensions/simple-datatables/style.css') }}" />
+    <link rel="stylesheet" href="{{ asset('template/assets/extensions/choices.js/public/assets/styles/choices.min.css') }}" />
 
     <link rel="stylesheet" crossorigin href="{{ asset('template/assets/compiled/css/table-datatable.css') }}" />
     <link rel="stylesheet" crossorigin href="{{ asset('template/assets/compiled/css/app.css') }}">
     <link rel="stylesheet" crossorigin href="{{ asset('template/assets/compiled/css/app-dark.css') }}">
     <link rel="stylesheet" crossorigin href="{{ asset('template/assets/compiled/css/iconly.css') }}">
+    <style>
+        .choices {
+            margin-bottom: 0;
+        }
+
+        .choices__inner {
+            min-height: 38px;
+            border-color: var(--bs-border-color);
+            background-color: var(--bs-body-bg);
+            border-radius: .375rem;
+        }
+
+        .choices[data-type*=select-one] .choices__inner {
+            padding-bottom: 3.5px;
+        }
+
+        .choices__list--dropdown,
+        .choices__list[aria-expanded] {
+            z-index: 1060;
+        }
+    </style>
     @stack('styles')
 </head>
 
@@ -322,6 +344,28 @@
 
     <script src="{{ asset('template/assets/extensions/simple-datatables/umd/simple-datatables.js') }}"></script>
     <script src="{{ asset('template/assets/static/js/pages/simple-datatables.js') }}"></script>
+    <script src="{{ asset('template/assets/extensions/choices.js/public/assets/scripts/choices.min.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('select[name="umat_id"], select[name="ketua_umat_id"]').forEach(function (select) {
+                if (select.dataset.choicesInitialized === 'true') {
+                    return;
+                }
+
+                select.dataset.choicesInitialized = 'true';
+
+                new Choices(select, {
+                    searchEnabled: true,
+                    shouldSort: false,
+                    itemSelectText: '',
+                    searchPlaceholderValue: 'Cari nama umat...',
+                    noResultsText: 'Umat tidak ditemukan',
+                    noChoicesText: 'Tidak ada pilihan',
+                    allowHTML: false
+                });
+            });
+        });
+    </script>
 
 
 
