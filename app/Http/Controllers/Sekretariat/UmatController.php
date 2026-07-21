@@ -93,7 +93,7 @@ class UmatController extends Controller
             'penyandang_disabilitas' => ['boolean'],
             'status_almarhum'        => ['boolean'],
             'keterangan_lain'        => ['boolean'],
-            'email'                  => ['required', 'email', 'unique:users,email'],
+            'email'                  => ['nullable', 'email', 'unique:users,email'],
         ]);
 
         $validated['penyandang_disabilitas'] = $request->boolean('penyandang_disabilitas');
@@ -104,27 +104,32 @@ class UmatController extends Controller
             collect($validated)->except(['email', 'password', 'password_confirmation'])->toArray()
         );
 
-        $user = User::create([
-            'name'     => $umat->nama,
-            'email'    => $validated['email'],
-            'password' => Hash::make('password'),
-            'umat_id'  => $umat->id,
-        ]);
-
-        // Assign default role 'umat'
-        $roleId = DB::table('roles')->where('name', 'umat')->value('id');
-        if ($roleId) {
-            DB::table('user_roles')->insertOrIgnore([
-                'user_id'    => $user->id,
-                'role_id'    => $roleId,
-                'created_at' => now(),
-                'updated_at' => now(),
+        // Buat akun login hanya jika email diisi
+        $pesanAkun = 'Data umat berhasil disimpan.';
+        if (!empty($validated['email'])) {
+            $user = User::create([
+                'name'     => $umat->nama,
+                'email'    => $validated['email'],
+                'password' => Hash::make('password'),
+                'umat_id'  => $umat->id,
             ]);
+
+            // Assign default role 'umat'
+            $roleId = DB::table('roles')->where('name', 'umat')->value('id');
+            if ($roleId) {
+                DB::table('user_roles')->insertOrIgnore([
+                    'user_id'    => $user->id,
+                    'role_id'    => $roleId,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+            $pesanAkun = 'Data umat dan akun login berhasil dibuat.';
         }
 
         return redirect()
             ->route('sekretariat.umat.show', $umat)
-            ->with('success', 'Data umat dan akun login berhasil dibuat.');
+            ->with('success', $pesanAkun);
     }
 
     /**
@@ -160,7 +165,7 @@ class UmatController extends Controller
             'status_almarhum'        => ['boolean'],
             'keterangan_lain'        => ['boolean'],
             // Akun login
-            'email'                  => ['required', 'email', 'unique:users,email'],
+            'email'                  => ['nullable', 'email', 'unique:users,email'],
         ]);
 
         $validated['keluarga_id']            = $keluarga->id;
@@ -172,28 +177,33 @@ class UmatController extends Controller
             collect($validated)->except(['email', 'password', 'password_confirmation'])->toArray()
         );
 
-        // Otomatis buat akun login untuk umat (default password: 'password')
-        $user = User::create([
-            'name'     => $umat->nama,
-            'email'    => $validated['email'],
-            'password' => Hash::make('password'),
-            'umat_id'  => $umat->id,
-        ]);
-
-        // Assign default role 'umat'
-        $roleId = DB::table('roles')->where('name', 'umat')->value('id');
-        if ($roleId) {
-            DB::table('user_roles')->insertOrIgnore([
-                'user_id'    => $user->id,
-                'role_id'    => $roleId,
-                'created_at' => now(),
-                'updated_at' => now(),
+        // Buat akun login hanya jika email diisi
+        $pesanAkun = 'Data anggota berhasil disimpan.';
+        if (!empty($validated['email'])) {
+            // Otomatis buat akun login untuk umat (default password: 'password')
+            $user = User::create([
+                'name'     => $umat->nama,
+                'email'    => $validated['email'],
+                'password' => Hash::make('password'),
+                'umat_id'  => $umat->id,
             ]);
+
+            // Assign default role 'umat'
+            $roleId = DB::table('roles')->where('name', 'umat')->value('id');
+            if ($roleId) {
+                DB::table('user_roles')->insertOrIgnore([
+                    'user_id'    => $user->id,
+                    'role_id'    => $roleId,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+            $pesanAkun = 'Data anggota dan akun login berhasil dibuat.';
         }
 
         return redirect()
             ->route('sekretariat.keluarga.show', $keluarga)
-            ->with('success', 'Data anggota dan akun login berhasil dibuat.');
+            ->with('success', $pesanAkun);
     }
 
     /**

@@ -92,7 +92,7 @@ class UmatController extends Controller
             'pendidikan'             => ['nullable', 'in:Tidak Sekolah,SD,SMP,SMA,D3,S1,S2,S3'],
             'pekerjaan'              => ['nullable', 'string', 'max:255'],
             'penyandang_disabilitas' => ['boolean'],
-            'email'                  => ['required', 'email', 'unique:users,email'],
+            'email'                  => ['nullable', 'email', 'unique:users,email'],
         ]);
 
         $keluargaValid = Keluarga::where('id', $validated['keluarga_id'])
@@ -106,27 +106,31 @@ class UmatController extends Controller
 
         $umat = Umat::create(collect($validated)->except(['email'])->toArray());
 
-        // Buat akun user + assign role 'umat'
-        $user = User::create([
-            'name'    => $umat->nama,
-            'email'   => $validated['email'],
-            'password'=> Hash::make('password'),
-            'umat_id' => $umat->id,
-        ]);
-
-        $umatRole = DB::table('roles')->where('name', 'umat')->first();
-        if ($umatRole) {
-            DB::table('user_roles')->insertOrIgnore([
-                'user_id'    => $user->id,
-                'role_id'    => $umatRole->id,
-                'created_at' => now(),
-                'updated_at' => now(),
+        // Buat akun user + assign role 'umat' hanya jika email diisi
+        $pesanAkun = 'Data umat berhasil disimpan.';
+        if (!empty($validated['email'])) {
+            $user = User::create([
+                'name'    => $umat->nama,
+                'email'   => $validated['email'],
+                'password'=> Hash::make('password'),
+                'umat_id' => $umat->id,
             ]);
+
+            $umatRole = DB::table('roles')->where('name', 'umat')->first();
+            if ($umatRole) {
+                DB::table('user_roles')->insertOrIgnore([
+                    'user_id'    => $user->id,
+                    'role_id'    => $umatRole->id,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+            $pesanAkun = 'Data umat dan akun login berhasil dibuat.';
         }
 
         return redirect()
             ->route('portal.umat.show', $umat)
-            ->with('success', 'Data umat dan akun login berhasil dibuat.');
+            ->with('success', $pesanAkun);
     }
 
     public function edit(Umat $umat)

@@ -179,6 +179,143 @@
             </div>
         @endif
 
+        {{-- ── STATISTIK SAKRAMEN KELUARGA (hanya untuk kepala keluarga) ────── --}}
+        @if ($isKetuaKeluarga && $keluargaStats)
+            @php
+                $sakramenConfig = [
+                    'BAPTIS'         => ['label' => 'Baptis',         'icon' => 'bi-droplet-fill',        'color' => 'info',      'bg' => '#0dcaf0'],
+                    'KOMUNI_PERTAMA' => ['label' => 'Komuni Pertama', 'icon' => 'bi-bookmark-star-fill',  'color' => 'success',   'bg' => '#198754'],
+                    'KRISMA'         => ['label' => 'Krisma',         'icon' => 'bi-star-fill',            'color' => 'warning',   'bg' => '#ffc107'],
+                    'PERNIKAHAN'     => ['label' => 'Pernikahan',     'icon' => 'bi-heart-fill',           'color' => 'danger',    'bg' => '#dc3545'],
+                    'MINYAK_SUCI'    => ['label' => 'Minyak Suci',   'icon' => 'bi-moisture',             'color' => 'secondary', 'bg' => '#6c757d'],
+                ];
+            @endphp
+            <div class="row mb-1">
+                <div class="col-12">
+                    <div class="d-flex align-items-center mb-2 mt-3">
+                        <i class="bi bi-award-fill text-warning me-2 fs-5"></i>
+                        <h6 class="mb-0 fw-bold">Sakramen Anggota Keluarga</h6>
+                        <a href="{{ route('portal.keluarga-saya.show') }}" class="btn btn-sm btn-outline-warning ms-auto">
+                            <i class="bi bi-people-fill me-1"></i>Kelola Anggota
+                        </a>
+                    </div>
+                </div>
+
+                {{-- Stat cards per jenis sakramen --}}
+                @foreach ($sakramenConfig as $jenis => $cfg)
+                    @php $stat = $keluargaStats[$jenis]; @endphp
+                    <div class="col-6 col-md-4 col-lg-2half" style="width:20%">
+                        <div class="card text-center h-100 border-0 shadow-sm">
+                            <div class="card-body py-3 px-2">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2 bg-light-{{ $cfg['color'] }}"
+                                    style="width:44px;height:44px;">
+                                    <i class="bi {{ $cfg['icon'] }} fs-5 text-{{ $cfg['color'] }}"></i>
+                                </div>
+                                <div class="fw-bold fs-4 text-{{ $cfg['color'] }}">{{ $stat['sudah'] }}/{{ $stat['total'] }}</div>
+                                <div class="small text-muted mb-2">{{ $cfg['label'] }}</div>
+                                <div class="progress" style="height:6px;" title="{{ $stat['persen'] }}%">
+                                    <div class="progress-bar bg-{{ $cfg['color'] }}"
+                                        style="width:{{ $stat['persen'] }}%"></div>
+                                </div>
+                                <div class="small text-muted mt-1">{{ $stat['persen'] }}%</div>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
+            {{-- Tabel detail per anggota --}}
+            @if ($anggotaSakramenDetail->isNotEmpty())
+                <div class="row mb-1">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">
+                                    <i class="bi bi-table me-2 text-info"></i>Detail Sakramen per Anggota
+                                </h5>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover mb-0 align-middle">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Nama</th>
+                                                <th class="text-center">
+                                                    <i class="bi bi-droplet-fill text-info" title="Baptis"></i>
+                                                    <span class="d-none d-md-inline ms-1">Baptis</span>
+                                                </th>
+                                                <th class="text-center">
+                                                    <i class="bi bi-bookmark-star-fill text-success" title="Komuni"></i>
+                                                    <span class="d-none d-md-inline ms-1">Komuni</span>
+                                                </th>
+                                                <th class="text-center">
+                                                    <i class="bi bi-star-fill text-warning" title="Krisma"></i>
+                                                    <span class="d-none d-md-inline ms-1">Krisma</span>
+                                                </th>
+                                                <th class="text-center">
+                                                    <i class="bi bi-heart-fill text-danger" title="Pernikahan"></i>
+                                                    <span class="d-none d-md-inline ms-1">Nikah</span>
+                                                </th>
+                                                <th class="text-center">
+                                                    <i class="bi bi-moisture text-secondary" title="Minyak Suci"></i>
+                                                    <span class="d-none d-md-inline ms-1">Minyak Suci</span>
+                                                </th>
+                                                <th class="text-center">Aksi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($anggotaSakramenDetail as $ang)
+                                                @php
+                                                    $angSakramens = $ang->sakramen->pluck('jenis_sakramen');
+                                                    $isSelf       = (int) $ang->id === (int) $umat?->id;
+                                                @endphp
+                                                <tr>
+                                                    <td>
+                                                        <span class="fw-semibold">{{ $ang->nama }}</span>
+                                                        @if ($isSelf)
+                                                            <span class="badge bg-light-primary text-primary ms-1">Anda</span>
+                                                        @endif
+                                                        @if ((int) $ang->id === (int) $keluarga->kepala_keluarga_id)
+                                                            <span class="badge bg-light-success text-success ms-1">KK</span>
+                                                        @endif
+                                                        <div class="small text-muted">{{ $ang->hubungan_keluarga ?? '' }}</div>
+                                                    </td>
+                                                    @foreach (['BAPTIS','KOMUNI_PERTAMA','KRISMA','PERNIKAHAN','MINYAK_SUCI'] as $j)
+                                                        <td class="text-center">
+                                                            @if ($angSakramens->contains($j))
+                                                                <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                                                            @else
+                                                                <i class="bi bi-x-circle text-muted fs-5"></i>
+                                                            @endif
+                                                        </td>
+                                                    @endforeach
+                                                    <td class="text-center">
+                                                        @if ($isSelf)
+                                                            <a href="{{ route('portal.sakramen-saya.index') }}"
+                                                               class="btn btn-xs btn-outline-primary py-0 px-2"
+                                                               title="Sakramen Saya">
+                                                                <i class="bi bi-award"></i>
+                                                            </a>
+                                                        @else
+                                                            <a href="{{ route('portal.sakramen-anggota.index', $ang) }}"
+                                                               class="btn btn-xs btn-outline-info py-0 px-2"
+                                                               title="Kelola Sakramen {{ $ang->nama }}">
+                                                                <i class="bi bi-pencil-square"></i>
+                                                            </a>
+                                                        @endif
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+        @endif
+
         {{-- ── DATA PRIBADI & KELUARGA ──────────────────────────────────────── --}}
         <section class="row">
 
@@ -472,6 +609,9 @@
                             </a>
                             <a href="{{ route('portal.umat.index') }}" class="btn btn-outline-primary text-start">
                                 <i class="bi bi-people-fill me-2"></i>Kelola Umat KUB
+                            </a>
+                            <a href="{{ route('portal.mutasi.umat-kub.create') }}" class="btn btn-outline-info text-start">
+                                <i class="bi bi-arrow-left-right me-2"></i>Ajukan Mutasi Umat KUB
                             </a>
                         @endif
                         @if($authUser->isKetuaKategorial())

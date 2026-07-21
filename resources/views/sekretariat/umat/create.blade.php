@@ -324,25 +324,26 @@
 
                                 {{-- ===== AKUN LOGIN ===== --}}
                                 <hr>
-                                <h6 class="text-muted fw-bold text-uppercase mb-3">Akun Login</h6>
+                                <h6 class="text-muted fw-bold text-uppercase mb-3">Akun Login <span class="badge bg-light-secondary text-secondary fw-normal text-lowercase">Opsional</span></h6>
+                                <div class="alert alert-light-info mb-3 py-2">
+                                    <i class="bi bi-info-circle-fill me-2"></i>
+                                    <strong>Untuk bayi atau anak kecil</strong>, biarkan email kosong &mdash; data tetap tersimpan tanpa akun login.
+                                </div>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="email">Email <span class="text-danger">*</span></label>
+                                            <label for="email">Email</label>
                                             <input type="email"
                                                 class="form-control @error('email') is-invalid @enderror" id="email"
-                                                name="email" placeholder="email@contoh.com"
+                                                name="email" placeholder="Kosongkan jika tidak memiliki email"
                                                 value="{{ old('email') }}">
                                             @error('email')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
-                                            <small class="form-text text-muted">Akan digunakan untuk login ke
-                                                sistem.</small>
+                                            <small class="form-text text-muted">
+                                                <i class="bi bi-key me-1"></i>Jika diisi, password default: <strong>password</strong>
+                                            </small>
                                         </div>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <small class="form-text text-muted">Password otomatis:
-                                            <strong>password</strong></small>
                                     </div>
                                 </div>
 

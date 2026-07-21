@@ -10,9 +10,14 @@
                     <h3>Daftar Umat</h3>
                     <p class="text-subtitle text-muted">Seluruh anggota jemaat di {{ $myKub->nama ?? 'KUB Anda' }}</p>
 
-                    <a href="{{ route('portal.umat.create') }}" class="btn btn-primary mb-3">
-                        <i class="bi bi-plus-lg"></i> Tambah Umat Baru
-                    </a>
+                    <div class="d-flex gap-2 mb-3 flex-wrap">
+                        <a href="{{ route('portal.umat.create') }}" class="btn btn-primary">
+                            <i class="bi bi-plus-lg"></i> Tambah Umat Baru
+                        </a>
+                        <a href="{{ route('portal.mutasi.umat-kub.create') }}" class="btn btn-outline-warning">
+                            <i class="bi bi-arrow-left-right"></i> Ajukan Mutasi Umat
+                        </a>
+                    </div>
                 </div>
                 <div class="col-12 col-md-6 order-md-2 order-first">
                     <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
@@ -49,6 +54,8 @@
                                         <td>
                                             <a href="{{ route('portal.umat.show', $u->id) }}"
                                                 class="btn btn-sm btn-outline-primary">Detail</a>
+                                            <a href="{{ route('portal.mutasi.umat-kub.create', ['umat_id' => $u->id]) }}"
+                                                class="btn btn-sm btn-outline-warning" title="Ajukan Mutasi untuk umat ini">Mutasi</a>
                                         </td>
                                     </tr>
                                 @endforeach

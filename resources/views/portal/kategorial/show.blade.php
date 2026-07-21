@@ -86,7 +86,10 @@
                                                     {{ \Carbon\Carbon::parse($u->pivot->tanggal_bergabung)->format('d M Y') }}
                                                 </td>
                                                 <td>
-                                                    @if ($u->pivot->status === 'Aktif')
+                                                    @if ($u->status_almarhum)
+                                                        <span class="badge bg-light-secondary text-secondary mb-1">Tidak Aktif</span>
+                                                        <span class="badge bg-dark">Almarhum</span>
+                                                    @elseif ($u->pivot->status === 'Aktif')
                                                         <span class="badge bg-light-success text-success">Aktif</span>
                                                     @else
                                                         <span class="badge bg-light-danger text-danger">Tidak Aktif</span>

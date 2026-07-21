@@ -27,6 +27,16 @@
             <div class="row justify-content-center">
                 <div class="col-12 col-lg-9">
 
+                    <div class="alert alert-light-info color-info mb-3 d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="bi bi-info-circle-fill me-2"></i>
+                            Untuk perubahan <strong>Keluarga, KUB, atau Wilayah</strong>, gunakan fitur pengajuan mutasi.
+                        </div>
+                        <a href="{{ route('portal.mutasi.umat-kub.create', ['umat_id' => $umat->id]) }}" class="btn btn-sm btn-outline-info text-nowrap ms-2">
+                            <i class="bi bi-arrow-left-right me-1"></i>Ajukan Mutasi
+                        </a>
+                    </div>
+
                     @if ($errors->any())
                         <div class="alert alert-light-danger color-danger alert-dismissible fade show mb-3">
                             <ul class="mb-0">@foreach ($errors->all() as $e)<li>{{ $e }}</li>@endforeach</ul>

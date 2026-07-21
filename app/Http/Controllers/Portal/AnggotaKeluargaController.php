@@ -60,7 +60,7 @@ class AnggotaKeluargaController extends Controller
             'pendidikan'             => ['nullable', 'in:Tidak Sekolah,SD,SMP,SMA,D3,S1,S2,S3'],
             'pekerjaan'              => ['nullable', 'string', 'max:255'],
             'penyandang_disabilitas' => ['boolean'],
-            'email'                  => ['required', 'email', 'unique:users,email'],
+            'email'                  => ['nullable', 'email', 'unique:users,email'],
         ]);
 
         $validated['keluarga_id']            = $keluarga->id;
@@ -71,26 +71,31 @@ class AnggotaKeluargaController extends Controller
             collect($validated)->except(['email'])->toArray()
         );
 
-        // Buat akun login + assign role 'umat'
-        $user = User::create([
-            'name'     => $umat->nama,
-            'email'    => $validated['email'],
-            'password' => Hash::make('password'),
-            'umat_id'  => $umat->id,
-        ]);
-
-        $roleId = DB::table('roles')->where('name', 'umat')->value('id');
-        if ($roleId) {
-            DB::table('user_roles')->insertOrIgnore([
-                'user_id'    => $user->id,
-                'role_id'    => $roleId,
-                'created_at' => now(),
-                'updated_at' => now(),
+        // Buat akun login hanya jika email diisi
+        $pesanAkun = '';
+        if (!empty($validated['email'])) {
+            $user = User::create([
+                'name'     => $umat->nama,
+                'email'    => $validated['email'],
+                'password' => Hash::make('password'),
+                'umat_id'  => $umat->id,
             ]);
+
+            $roleId = DB::table('roles')->where('name', 'umat')->value('id');
+            if ($roleId) {
+                DB::table('user_roles')->insertOrIgnore([
+                    'user_id'    => $user->id,
+                    'role_id'    => $roleId,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+
+            $pesanAkun = " Akun login: {$validated['email']} | Password: password";
         }
 
         return redirect()
             ->route('portal.dashboard')
-            ->with('success', "Anggota keluarga <strong>{$umat->nama}</strong> berhasil ditambahkan. Akun login: {$validated['email']} | Password: password");
+            ->with('success', "Anggota keluarga <strong>{$umat->nama}</strong> berhasil ditambahkan.{$pesanAkun}");
     }
 }

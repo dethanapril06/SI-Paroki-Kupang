@@ -44,6 +44,45 @@ class Umat extends Model
         'keterangan_lain'       => 'boolean',
     ];
 
+    protected static function booted()
+    {
+        static::created(function ($umat) {
+            if ($umat->keluarga) {
+                $umat->keluarga->autoSetKepalaKeluarga(true);
+            }
+        });
+
+        static::updated(function ($umat) {
+            // Jika umat menjadi almarhum atau tidak aktif, otomatis set status di anggota_kategorial menjadi Tidak Aktif
+            if ($umat->status_almarhum || $umat->status_keaktifan !== 'aktif') {
+                AnggotaKategorial::where('umat_id', $umat->id)
+                    ->where('status', 'Aktif')
+                    ->update(['status' => 'Tidak Aktif']);
+            }
+
+            // Otomatis sesuaikan kepala keluarga jika terjadi perubahan hubungan, keaktifan, atau pindah keluarga
+            if ($umat->isDirty(['keluarga_id', 'hubungan_keluarga', 'status_almarhum', 'status_keaktifan'])) {
+                if ($umat->keluarga) {
+                    $umat->keluarga->autoSetKepalaKeluarga(true);
+                }
+                // Jika berpindah keluarga, cek juga keluarga lama
+                $oldKeluargaId = $umat->getOriginal('keluarga_id');
+                if ($oldKeluargaId && $oldKeluargaId != $umat->keluarga_id) {
+                    $oldKeluarga = Keluarga::find($oldKeluargaId);
+                    if ($oldKeluarga) {
+                        $oldKeluarga->autoSetKepalaKeluarga(true);
+                    }
+                }
+            }
+        });
+
+        static::deleted(function ($umat) {
+            if ($umat->keluarga) {
+                $umat->keluarga->autoSetKepalaKeluarga(true);
+            }
+        });
+    }
+
     // =========================================================================
     // Relasi ke atas (parent)
     // =========================================================================

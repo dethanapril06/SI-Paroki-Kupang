@@ -52,7 +52,15 @@ class LaporanController extends Controller
     {
         $kubs = Kub::with('wilayah')->orderBy('nama')->get();
         $kategorials = Kategorial::orderBy('nama')->get();
-        return view('sekretariat.laporan.index', compact('kubs', 'kategorials'));
+        $pekerjaanList = Umat::aktif()
+            ->whereNotNull('pekerjaan')
+            ->where('pekerjaan', '!=', '')
+            ->distinct()
+            ->pluck('pekerjaan')
+            ->sort()
+            ->values();
+
+        return view('sekretariat.laporan.index', compact('kubs', 'kategorials', 'pekerjaanList'));
     }
 
     /**
@@ -313,6 +321,118 @@ class LaporanController extends Controller
                 ->setPaper('a4', 'portrait');
 
             $filename = 'Laporan_Kelompok_Usia_Umat_' . date('Ymd_His') . '.pdf';
+
+        } elseif ($subReport === 'rekap_kategori') {
+            $outputType       = $request->query('output_type', 'summary');
+            $groupBy          = $request->query('group_by', 'pekerjaan');
+            $pekerjaan        = $request->query('pekerjaan');
+            $golonganDarah    = $request->query('golongan_darah');
+            $pendidikan       = $request->query('pendidikan');
+            $statusPernikahan = $request->query('status_pernikahan');
+            $jenisKelamin     = $request->query('jenis_kelamin');
+
+            $query = Umat::aktif()->with('keluarga.kub.wilayah')
+                ->where('status_almarhum', false)
+                ->where('status_keaktifan', 'aktif');
+
+            if ($kubId) {
+                $query->whereHas('keluarga', fn($q) => $q->where('kub_id', $kubId));
+            }
+            if ($pekerjaan && $pekerjaan !== 'semua') {
+                $query->where('pekerjaan', $pekerjaan);
+            }
+            if ($golonganDarah && $golonganDarah !== 'semua') {
+                $query->where('golongan_darah', $golonganDarah);
+            }
+            if ($pendidikan && $pendidikan !== 'semua') {
+                $query->where('pendidikan', $pendidikan);
+            }
+            if ($statusPernikahan && $statusPernikahan !== 'semua') {
+                $query->where('status_pernikahan', $statusPernikahan);
+            }
+            if ($jenisKelamin && $jenisKelamin !== 'semua') {
+                $query->where('jenis_kelamin', $jenisKelamin);
+            }
+
+            $umatList = $query->orderBy('nama')->get();
+
+            $groupLabels = [
+                'pekerjaan'         => 'Pekerjaan',
+                'golongan_darah'    => 'Golongan Darah',
+                'pendidikan'        => 'Tingkat Pendidikan',
+                'status_pernikahan' => 'Status Pernikahan',
+                'jenis_kelamin'     => 'Jenis Kelamin',
+                'hubungan_keluarga' => 'Hubungan Keluarga',
+            ];
+            $groupTitle = $groupLabels[$groupBy] ?? 'Kategori';
+
+            $activeFiltersText = [];
+            if ($kubId && $selectedKub) $activeFiltersText[] = "KUB: " . $selectedKub->nama;
+            if ($pekerjaan && $pekerjaan !== 'semua') $activeFiltersText[] = "Pekerjaan: " . $pekerjaan;
+            if ($golonganDarah && $golonganDarah !== 'semua') $activeFiltersText[] = "Gol. Darah: " . $golonganDarah;
+            if ($pendidikan && $pendidikan !== 'semua') $activeFiltersText[] = "Pendidikan: " . $pendidikan;
+            if ($statusPernikahan && $statusPernikahan !== 'semua') $activeFiltersText[] = "Status Pernikahan: " . $statusPernikahan;
+            if ($jenisKelamin && $jenisKelamin !== 'semua') $activeFiltersText[] = "Jenis Kelamin: " . $jenisKelamin;
+            $filterString = !empty($activeFiltersText) ? implode(' | ', $activeFiltersText) : 'Semua Umat Aktif';
+
+            if ($outputType === 'summary') {
+                // Rekapitulasi Jumlah & Persentase per Kategori (group_by)
+                $groupedSummary = $umatList->groupBy(function ($u) use ($groupBy) {
+                    $val = $u->{$groupBy};
+                    return !empty($val) ? $val : 'Tidak/Belum Diisi';
+                })->map(function ($items, $key) use ($umatList) {
+                    $laki = $items->where('jenis_kelamin', 'Laki-laki')->count();
+                    $perempuan = $items->where('jenis_kelamin', 'Perempuan')->count();
+                    $total = $items->count();
+                    $totalAll = max(1, $umatList->count());
+                    $percent = round(($total / $totalAll) * 100, 1);
+                    return (object) [
+                        'kategori'  => $key,
+                        'laki'      => $laki,
+                        'perempuan' => $perempuan,
+                        'total'     => $total,
+                        'percent'   => $percent,
+                    ];
+                })->sortByDesc('total')->values();
+
+                $statsSummary = [
+                    'total_laki'      => $umatList->where('jenis_kelamin', 'Laki-laki')->count(),
+                    'total_perempuan' => $umatList->where('jenis_kelamin', 'Perempuan')->count(),
+                    'total'           => $umatList->count(),
+                ];
+
+                $filters = [
+                    'sub_report'    => 'rekap_kategori_summary',
+                    'judul'         => "Laporan Rekapitulasi Umat Berdasarkan {$groupTitle}",
+                    'kub'           => $selectedKub ? $selectedKub->nama : 'Semua KUB',
+                    'filter_text'   => $filterString,
+                    'group_title'   => $groupTitle,
+                ];
+
+                $pdf = Pdf::loadView('sekretariat.laporan.pdf.umat', array_merge(compact('groupedSummary', 'statsSummary', 'filters'), $pdfLogos))
+                    ->setPaper('a4', 'portrait');
+
+                $filename = "Laporan_Rekap_{$groupTitle}_" . date('Ymd_His') . '.pdf';
+            } else {
+                // Daftar Roster Umat Terfilter
+                $filters = [
+                    'sub_report'    => 'rekap_kategori_roster',
+                    'judul'         => "Laporan Roster Umat Berdasarkan Filter Kategori",
+                    'kub'           => $selectedKub ? $selectedKub->nama : 'Semua KUB',
+                    'filter_text'   => $filterString,
+                ];
+
+                $statsSummary = [
+                    'total_laki'      => $umatList->where('jenis_kelamin', 'Laki-laki')->count(),
+                    'total_perempuan' => $umatList->where('jenis_kelamin', 'Perempuan')->count(),
+                    'total'           => $umatList->count(),
+                ];
+
+                $pdf = Pdf::loadView('sekretariat.laporan.pdf.umat', array_merge(compact('umatList', 'statsSummary', 'filters'), $pdfLogos))
+                    ->setPaper('a4', 'landscape');
+
+                $filename = "Laporan_Roster_Terfilter_" . date('Ymd_His') . '.pdf';
+            }
 
         } else {
             // Lansia & Sakit (Prioritas Kunjungan)

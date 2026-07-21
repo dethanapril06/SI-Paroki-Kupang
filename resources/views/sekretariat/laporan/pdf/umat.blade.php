@@ -372,6 +372,130 @@
                 @endforelse
             </tbody>
         </table>
+
+    @elseif ($filters['sub_report'] === 'rekap_kategori_summary')
+        <div style="font-size: 10px; margin-bottom: 10px; background-color: #f8f9fa; padding: 6px 10px; border-left: 3px solid #435ebe;">
+            <strong>Filter Terpasang:</strong> {{ $filters['filter_text'] ?? 'Semua' }}
+        </div>
+        <table class="stats-table">
+            <tr>
+                <td style="width: 33.3%;">
+                    <strong>{{ $statsSummary['total'] }}</strong>
+                    TOTAL UMAT AKTIF
+                </td>
+                <td style="width: 33.3%;">
+                    <strong>{{ $statsSummary['total_laki'] }}</strong>
+                    TOTAL LAKI-LAKI
+                </td>
+                <td style="width: 33.3%;">
+                    <strong>{{ $statsSummary['total_perempuan'] }}</strong>
+                    TOTAL PEREMPUAN
+                </td>
+            </tr>
+        </table>
+
+        <table class="main-table">
+            <thead>
+                <tr>
+                    <th width="8%" class="text-center">No</th>
+                    <th width="44%" class="text-left">{{ $filters['group_title'] ?? 'Kategori' }}</th>
+                    <th width="16%" class="text-center">Laki-Laki</th>
+                    <th width="16%" class="text-center">Perempuan</th>
+                    <th width="16%" class="text-center">Total Umat</th>
+                    <th width="14%" class="text-center">Persentase</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse ($groupedSummary as $i => $row)
+                    <tr>
+                        <td class="text-center">{{ $i + 1 }}</td>
+                        <td class="text-left"><strong>{{ $row->kategori }}</strong></td>
+                        <td class="text-center">{{ number_format($row->laki) }}</td>
+                        <td class="text-center">{{ number_format($row->perempuan) }}</td>
+                        <td class="text-center font-bold">{{ number_format($row->total) }}</td>
+                        <td class="text-center">{{ $row->percent }}%</td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="6" class="text-center" style="padding: 15px;">Tidak ada data yang sesuai filter.</td>
+                    </tr>
+                @endforelse
+            </tbody>
+            @if(count($groupedSummary) > 0)
+            <tfoot>
+                <tr style="background-color: #eee; font-weight: bold;">
+                    <td colspan="2" class="text-center">TOTAL KESELURUHAN</td>
+                    <td class="text-center">{{ number_format($groupedSummary->sum('laki')) }}</td>
+                    <td class="text-center">{{ number_format($groupedSummary->sum('perempuan')) }}</td>
+                    <td class="text-center">{{ number_format($groupedSummary->sum('total')) }}</td>
+                    <td class="text-center">100%</td>
+                </tr>
+            </tfoot>
+            @endif
+        </table>
+
+    @elseif ($filters['sub_report'] === 'rekap_kategori_roster')
+        <div style="font-size: 10px; margin-bottom: 10px; background-color: #f8f9fa; padding: 6px 10px; border-left: 3px solid #435ebe;">
+            <strong>Filter Terpasang:</strong> {{ $filters['filter_text'] ?? 'Semua' }}
+        </div>
+        <table class="stats-table">
+            <tr>
+                <td style="width: 33.3%;">
+                    <strong>{{ $statsSummary['total'] }}</strong>
+                    TOTAL UMAT TERFILTER
+                </td>
+                <td style="width: 33.3%;">
+                    <strong>{{ $statsSummary['total_laki'] }}</strong>
+                    TOTAL LAKI-LAKI
+                </td>
+                <td style="width: 33.3%;">
+                    <strong>{{ $statsSummary['total_perempuan'] }}</strong>
+                    TOTAL PEREMPUAN
+                </td>
+            </tr>
+        </table>
+
+        <table class="main-table">
+            <thead>
+                <tr>
+                    <th width="5%" class="text-center">No</th>
+                    <th width="22%" class="text-left">Nama Lengkap</th>
+                    <th width="15%" class="text-left">KUB / Wilayah</th>
+                    <th width="6%" class="text-center">L/P</th>
+                    <th width="12%" class="text-center">Usia & Tgl Lahir</th>
+                    <th width="14%" class="text-left">Pekerjaan</th>
+                    <th width="10%" class="text-center">Gol. Darah</th>
+                    <th width="16%" class="text-left">Pendidikan / Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse ($umatList as $i => $u)
+                    <tr>
+                        <td class="text-center">{{ $i + 1 }}</td>
+                        <td class="text-left font-bold">{{ $u->nama }}</td>
+                        <td class="text-left">
+                            {{ $u->keluarga->kub->nama ?? '-' }}<br>
+                            <span style="font-size: 7px; color: #555;">{{ $u->keluarga->kub->wilayah->nama ?? '-' }}</span>
+                        </td>
+                        <td class="text-center">{{ $u->jenis_kelamin === 'Laki-laki' || $u->jenis_kelamin === 'L' ? 'L' : 'P' }}</td>
+                        <td class="text-center">
+                            {{ $u->tanggal_lahir ? $u->tanggal_lahir->age . ' Th' : '-' }}<br>
+                            <span style="font-size: 7px; color: #555;">{{ $u->tanggal_lahir ? $u->tanggal_lahir->format('d/m/Y') : '-' }}</span>
+                        </td>
+                        <td class="text-left">{{ $u->pekerjaan ?: '-' }}</td>
+                        <td class="text-center"><strong>{{ $u->golongan_darah ?: '-' }}</strong></td>
+                        <td class="text-left">
+                            {{ $u->pendidikan ?: '-' }}<br>
+                            <span style="font-size: 7px; color: #555;">{{ $u->status_pernikahan ?: '-' }}</span>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="8" class="text-center" style="padding: 15px;">Tidak ada data umat yang memenuhi filter.</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
     @endif
 
     @php

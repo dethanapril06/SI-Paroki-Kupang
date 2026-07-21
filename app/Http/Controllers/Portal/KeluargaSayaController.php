@@ -69,7 +69,7 @@ class KeluargaSayaController extends Controller
         $keluarga = $this->getKeluargaSaya();
         $this->authorizeKepala($keluarga);
 
-        $anggota = $keluarga->umat()->aktif()->orderBy('nama')->get();
+        $anggota = $keluarga->getAnggotaTerurutPrioritas();
 
         return view('portal.keluarga-saya.edit', compact('keluarga', 'anggota'));
     }
@@ -103,6 +103,10 @@ class KeluargaSayaController extends Controller
         }
 
         $keluarga->update($validated);
+
+        if (empty($validated['kepala_keluarga_id'])) {
+            $keluarga->autoSetKepalaKeluarga(true);
+        }
 
         return redirect()
             ->route('portal.keluarga-saya.show')

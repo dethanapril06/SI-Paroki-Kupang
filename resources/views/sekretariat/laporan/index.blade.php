@@ -139,15 +139,21 @@
                                     <div class="form-group mb-3">
                                         <label class="form-label font-bold text-sm">Pilih Jenis Laporan</label>
                                         <select class="form-select border-primary-hover" name="sub_report"
-                                            id="sub-report-umat">
+                                            id="sub-report-umat" onchange="toggleUmatFilters()">
                                             <option value="rekap_kub">Rekapitulasi Jumlah Umat & KK per KUB</option>
                                             <option value="kelompok_usia">Statistik Umat Berdasarkan Kelompok Usia</option>
-                                            <option value="lansia_sakit">Daftar Umat Lansia & Sakit (Prioritas Kunjungan)
-                                            </option>
+                                            <option value="lansia_sakit">Daftar Umat Lansia & Sakit (Prioritas Kunjungan)</option>
+                                            <option value="rekap_kategori">Rekap & Roster Umat per Kategori (Pekerjaan, Gol. Darah, dll.)</option>
                                         </select>
                                     </div>
 
-                                    <div class="form-group mb-3">
+                                    <div id="btn-filter-kategori-container" class="mb-3" style="display: none;">
+                                        <button type="button" class="btn btn-outline-primary btn-sm w-100 d-flex align-items-center justify-content-center gap-2 font-bold py-2 shadow-sm" onclick="openModalFilterUmat()" style="border-color: #435ebe; color: #435ebe; background-color: #f2f5ff;">
+                                            <i class="bi bi-funnel-fill"></i> Atur Filter Kategori & Rekap Lengkap...
+                                        </button>
+                                    </div>
+
+                                    <div class="form-group mb-3" id="kub-umat-container">
                                         <label class="form-label font-bold text-sm">Filter Berdasarkan KUB</label>
                                         <select class="form-select" name="kub_id">
                                             <option value="">Semua KUB (Seluruh Paroki)</option>
@@ -323,9 +329,164 @@
     </style>
 @endpush
 
+{{-- Modal Filter Rekap & Roster Umat per Kategori --}}
+<div class="modal fade" id="modalFilterUmat" tabindex="-1" aria-labelledby="modalFilterUmatLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 14px; overflow: hidden;">
+            <div class="modal-header text-white" style="background: linear-gradient(135deg, #435ebe 0%, #2b3990 100%);">
+                <h5 class="modal-title font-bold d-flex align-items-center gap-2 text-white" id="modalFilterUmatLabel">
+                    <i class="bi bi-funnel-fill fs-4"></i> Filter & Rekapitulasi Umat Per Kategori
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4" style="background-color: #f8f9fa;">
+                <form id="form-modal-filter-umat" action="{{ route('sekretariat.laporan.umat') }}" method="GET" target="_blank">
+                    <input type="hidden" name="sub_report" value="rekap_kategori">
+                    <input type="hidden" name="action" id="modal-action-umat" value="preview">
+
+                    {{-- 1. Pilih Tampilan Output --}}
+                    <div class="card border-0 shadow-sm mb-4" style="border-radius: 10px;">
+                        <div class="card-body p-3">
+                            <label class="form-label font-bold text-sm text-primary mb-2 d-block">
+                                <i class="bi bi-layout-text-window-reverse me-1"></i> Pilih Tampilan Output Laporan
+                            </label>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="form-check border rounded p-3 h-100 bg-white shadow-sm-hover" style="cursor: pointer;" onclick="document.getElementById('out-summary').click();">
+                                        <input class="form-check-input" type="radio" name="output_type" id="out-summary" value="summary" checked onchange="toggleGroupBySelect()">
+                                        <label class="form-check-label font-bold d-block" for="out-summary" style="cursor: pointer;">
+                                            Rekapitulasi Statistik Ringkas
+                                        </label>
+                                        <small class="text-muted">Tabel ringkasan jumlah & persentase umat berdasarkan kategori.</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check border rounded p-3 h-100 bg-white shadow-sm-hover" style="cursor: pointer;" onclick="document.getElementById('out-roster').click();">
+                                        <input class="form-check-input" type="radio" name="output_type" id="out-roster" value="roster" onchange="toggleGroupBySelect()">
+                                        <label class="form-check-label font-bold d-block" for="out-roster" style="cursor: pointer;">
+                                            Daftar Roster Umat Lengkap
+                                        </label>
+                                        <small class="text-muted">Tabel detail nama, KUB, usia, dan data pribadi umat yang memenuhi filter.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Group By (Hanya jika pilih Rekapitulasi Summary) --}}
+                            <div id="container-group-by" class="mt-3 pt-3 border-top">
+                                <label class="form-label font-bold text-sm mb-1">Kelompokkan Rekapitulasi Berdasarkan:</label>
+                                <select class="form-select border-primary" name="group_by" id="modal-group-by">
+                                    <option value="pekerjaan">Pekerjaan</option>
+                                    <option value="golongan_darah">Golongan Darah</option>
+                                    <option value="pendidikan">Tingkat Pendidikan</option>
+                                    <option value="status_pernikahan">Status Pernikahan</option>
+                                    <option value="jenis_kelamin">Jenis Kelamin</option>
+                                    <option value="hubungan_keluarga">Hubungan Keluarga (Suami/Istri/Anak)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- 2. Filter Kriteria Spesifik --}}
+                    <div class="card border-0 shadow-sm" style="border-radius: 10px;">
+                        <div class="card-body p-3">
+                            <label class="form-label font-bold text-sm text-primary mb-3 d-block">
+                                <i class="bi bi-filter-square me-1"></i> Filter Kriteria Umat (Opsional / Bisa Dikombinasikan)
+                            </label>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label text-xs font-bold text-muted mb-1">Wilayah / KUB</label>
+                                    <select class="form-select form-select-sm" name="kub_id">
+                                        <option value="">-- Semua KUB (Seluruh Paroki) --</option>
+                                        @foreach ($kubs as $k)
+                                            <option value="{{ $k->id }}">{{ $k->nama }} ({{ $k->wilayah->nama ?? '-' }})</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label text-xs font-bold text-muted mb-1">Pekerjaan</label>
+                                    <select class="form-select form-select-sm" name="pekerjaan">
+                                        <option value="semua">-- Semua Pekerjaan --</option>
+                                        @if(!empty($pekerjaanList))
+                                            @foreach ($pekerjaanList as $p)
+                                                <option value="{{ $p }}">{{ $p }}</option>
+                                            @endforeach
+                                        @endif
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label text-xs font-bold text-muted mb-1">Golongan Darah</label>
+                                    <select class="form-select form-select-sm" name="golongan_darah">
+                                        <option value="semua">-- Semua Gol. Darah --</option>
+                                        <option value="A">A</option>
+                                        <option value="B">B</option>
+                                        <option value="AB">AB</option>
+                                        <option value="O">O</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label text-xs font-bold text-muted mb-1">Tingkat Pendidikan</label>
+                                    <select class="form-select form-select-sm" name="pendidikan">
+                                        <option value="semua">-- Semua Pendidikan --</option>
+                                        <option value="Tidak Sekolah">Tidak/Belum Sekolah</option>
+                                        <option value="SD">SD/Sederajat</option>
+                                        <option value="SMP">SMP/Sederajat</option>
+                                        <option value="SMA">SMA/SMK/Sederajat</option>
+                                        <option value="D1/D2/D3">Diploma (D1-D3)</option>
+                                        <option value="S1/D4">Sarjana (S1/D4)</option>
+                                        <option value="S2">Magister (S2)</option>
+                                        <option value="S3">Doktor (S3)</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label text-xs font-bold text-muted mb-1">Status Pernikahan</label>
+                                    <select class="form-select form-select-sm" name="status_pernikahan">
+                                        <option value="semua">-- Semua Status --</option>
+                                        <option value="Belum Kawin">Belum Kawin</option>
+                                        <option value="Kawin">Kawin / Menikah</option>
+                                        <option value="Cerai Hidup">Cerai Hidup</option>
+                                        <option value="Cerai Mati">Cerai Mati</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label text-xs font-bold text-muted mb-1">Jenis Kelamin</label>
+                                    <select class="form-select form-select-sm" name="jenis_kelamin">
+                                        <option value="semua">-- Laki-laki & Perempuan --</option>
+                                        <option value="Laki-laki">Laki-laki</option>
+                                        <option value="Perempuan">Perempuan</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer bg-white border-top p-3 d-flex justify-content-between">
+                <button type="button" class="btn btn-light-secondary px-4 font-bold" data-bs-dismiss="modal">Tutup</button>
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-outline-primary d-flex align-items-center gap-2 font-bold px-3" style="border-color: #435ebe; color: #435ebe;" onclick="submitModalFilterUmat('preview')">
+                        <i class="bi bi-eye-fill"></i> Preview PDF
+                    </button>
+                    <button type="button" class="btn btn-primary d-flex align-items-center gap-2 font-bold px-3 shadow-sm" style="background-color: #435ebe; border-color: #435ebe;" onclick="submitModalFilterUmat('download')">
+                        <i class="bi bi-file-earmark-pdf-fill"></i> Unduh PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @push('scripts')
     <script>
         function submitReport(type, action) {
+            // Jika memilih rekap kategori, arahkan ke modal
+            if (type === 'umat') {
+                const subReport = document.getElementById('sub-report-umat').value;
+                if (subReport === 'rekap_kategori') {
+                    openModalFilterUmat();
+                    return;
+                }
+            }
+
             // Validation check for kategorial detail
             if (type === 'organisasi') {
                 const subReport = document.getElementById('sub-report-organisasi').value;
@@ -347,6 +508,50 @@
                 form.removeAttribute('target');
             }
 
+            form.submit();
+        }
+
+        function toggleUmatFilters() {
+            const subReport = document.getElementById('sub-report-umat').value;
+            const btnContainer = document.getElementById('btn-filter-kategori-container');
+            const kubContainer = document.getElementById('kub-umat-container');
+
+            if (subReport === 'rekap_kategori') {
+                if (btnContainer) btnContainer.style.display = 'block';
+                if (kubContainer) kubContainer.style.display = 'none';
+                openModalFilterUmat();
+            } else {
+                if (btnContainer) btnContainer.style.display = 'none';
+                if (kubContainer) kubContainer.style.display = 'block';
+            }
+        }
+
+        function openModalFilterUmat() {
+            const modalEl = document.getElementById('modalFilterUmat');
+            if (modalEl) {
+                const modal = new bootstrap.Modal(modalEl);
+                modal.show();
+            }
+        }
+
+        function toggleGroupBySelect() {
+            const outType = document.querySelector('input[name="output_type"]:checked')?.value;
+            const container = document.getElementById('container-group-by');
+            if (container) {
+                container.style.display = (outType === 'summary') ? 'block' : 'none';
+            }
+        }
+
+        function submitModalFilterUmat(action) {
+            const form = document.getElementById('form-modal-filter-umat');
+            const actionInput = document.getElementById('modal-action-umat');
+            actionInput.value = action;
+
+            if (action === 'preview') {
+                form.target = '_blank';
+            } else {
+                form.removeAttribute('target');
+            }
             form.submit();
         }
 
@@ -385,6 +590,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             toggleSakramenFilters();
             toggleOrganisasiFilters();
+            toggleUmatFilters();
         });
     </script>
 @endpush

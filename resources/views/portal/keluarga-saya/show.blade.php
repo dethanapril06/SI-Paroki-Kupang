@@ -130,6 +130,9 @@
                                             <th>Status Sakramen</th>
                                             <th>Status Nikah</th>
                                             <th>No. Telepon</th>
+                                            @if ($isKetuaKeluarga)
+                                                <th class="text-center">Aksi</th>
+                                            @endif
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -191,6 +194,23 @@
                                                 </td>
                                                 <td>{{ $anggota->status_pernikahan ?? '-' }}</td>
                                                 <td>{{ $anggota->no_telepon ?? '-' }}</td>
+                                                @if ($isKetuaKeluarga)
+                                                    <td class="text-center">
+                                                        @if ($anggota->id !== $umat->id)
+                                                            <a href="{{ route('portal.sakramen-anggota.index', $anggota) }}"
+                                                               class="btn btn-sm btn-outline-info"
+                                                               title="Kelola Sakramen {{ $anggota->nama }}">
+                                                                <i class="bi bi-award-fill me-1"></i>Sakramen
+                                                            </a>
+                                                        @else
+                                                            <a href="{{ route('portal.sakramen-saya.index') }}"
+                                                               class="btn btn-sm btn-outline-primary"
+                                                               title="Sakramen Saya">
+                                                                <i class="bi bi-award me-1"></i>Saya
+                                                            </a>
+                                                        @endif
+                                                    </td>
+                                                @endif
                                             </tr>
                                         @empty
                                             <tr>

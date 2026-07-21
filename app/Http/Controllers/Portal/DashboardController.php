@@ -79,6 +79,38 @@ class DashboardController extends Controller
             }
         }
 
+        // ── Statistik sakramen keluarga (hanya jika kepala keluarga) ─────────
+        $isKetuaKeluarga       = false;
+        $keluargaStats         = null;
+        $anggotaSakramenDetail = collect();
+
+        if ($umat && $keluarga && (int) $keluarga->kepala_keluarga_id === (int) $umat->id) {
+            $isKetuaKeluarga = true;
+
+            // Muat semua anggota aktif beserta sakramennya
+            $semuaAnggota = Umat::aktif()
+                ->where('keluarga_id', $keluarga->id)
+                ->with('sakramen')
+                ->get();
+
+            $jenisList = ['BAPTIS', 'KOMUNI_PERTAMA', 'KRISMA', 'PERNIKAHAN', 'MINYAK_SUCI'];
+            $totalAnggota = $semuaAnggota->count();
+
+            $keluargaStats = [];
+            foreach ($jenisList as $jenis) {
+                $sudah = $semuaAnggota->filter(
+                    fn($u) => $u->sakramen->pluck('jenis_sakramen')->contains($jenis)
+                )->count();
+                $keluargaStats[$jenis] = [
+                    'sudah' => $sudah,
+                    'total' => $totalAnggota,
+                    'persen' => $totalAnggota > 0 ? round($sudah / $totalAnggota * 100) : 0,
+                ];
+            }
+
+            $anggotaSakramenDetail = $semuaAnggota;
+        }
+
         // ── Data Kategorial (hanya jika ketua_kategorial) ────────────────────
         $kategorialDiPimpin = collect();
         if ($user->isKetuaKategorial()) {
@@ -93,6 +125,7 @@ class DashboardController extends Controller
             'mutasiTerbaru', 'pendingMutasi',
             'kubSaya', 'kubStats', 'daftarKeluarga',
             'kategorialDiPimpin',
+            'isKetuaKeluarga', 'keluargaStats', 'anggotaSakramenDetail',
         ));
     }
 }

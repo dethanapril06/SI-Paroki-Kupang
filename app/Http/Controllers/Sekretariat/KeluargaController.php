@@ -76,10 +76,7 @@ class KeluargaController extends Controller
     public function edit(Keluarga $keluarga)
     {
         $kub     = Kub::with('wilayah')->orderBy('nama')->get();
-        $anggota = Umat::aktif()
-            ->where('keluarga_id', $keluarga->id)
-            ->orderBy('nama')
-            ->get();
+        $anggota = $keluarga->getAnggotaTerurutPrioritas();
 
         return view('sekretariat.keluarga.edit', compact('keluarga', 'kub', 'anggota'));
     }
@@ -108,7 +105,15 @@ class KeluargaController extends Controller
             }
         }
 
+        // kub_id tidak diupdate secara langsung (harus melalui fitur mutasi keluarga)
+        unset($validated['kub_id']);
+
         $keluarga->update($validated);
+
+        // Jika kepala_keluarga_id tidak diisi atau null, otomatis sesuaikan berdasarkan prioritas (Suami -> Istri -> Anak -> dst)
+        if (empty($validated['kepala_keluarga_id'])) {
+            $keluarga->autoSetKepalaKeluarga(true);
+        }
 
         return redirect()
             ->route('sekretariat.keluarga.show', $keluarga)

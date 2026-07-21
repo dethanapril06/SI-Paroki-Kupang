@@ -34,16 +34,25 @@
                             <div class="col-md-12">
                                 <div class="form-group mb-3">
                                     <label for="kepala_keluarga_id">Kepala Keluarga</label>
+                                    @php
+                                        $rekomendasiId = $keluarga->getRekomendasiKepalaKeluarga()?->id;
+                                        $selectedId = old('kepala_keluarga_id', $keluarga->kepala_keluarga_id ?? $rekomendasiId);
+                                    @endphp
                                     <select name="kepala_keluarga_id" id="kepala_keluarga_id"
                                         class="form-select @error('kepala_keluarga_id') is-invalid @enderror">
-                                        <option value="">-- Pilih Kepala Keluarga --</option>
-                                        @foreach ($keluarga->umat as $u)
+                                        <option value="">-- Pilih Kepala Keluarga (Otomatis) --</option>
+                                        @foreach ($anggota as $u)
                                             <option value="{{ $u->id }}"
-                                                {{ old('kepala_keluarga_id', $keluarga->kepala_keluarga_id) == $u->id ? 'selected' : '' }}>
-                                                {{ $u->nama }} ({{ $u->hubungan_keluarga }})
+                                                {{ $selectedId == $u->id ? 'selected' : '' }}>
+                                                [{{ $u->hubungan_keluarga }}] {{ $u->nama }}
+                                                @if ($rekomendasiId == $u->id) (Prioritas Utama) @endif
                                             </option>
                                         @endforeach
                                     </select>
+                                    <small class="text-muted d-block mt-1">
+                                        <i class="bi bi-info-circle me-1"></i>
+                                        Urutan prioritas: <strong>Suami -> Istri -> Anak -> Lainnya</strong>.
+                                    </small>
                                     @error('kepala_keluarga_id')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror

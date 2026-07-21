@@ -312,4 +312,99 @@ class MutasiRequestController extends Controller
         return redirect()->route('portal.mutasi.index')
             ->with('success', 'Request mutasi agama berhasil dikirim. Menunggu persetujuan sekretariat.');
     }
+    // =========================================================================
+    // Mutasi Umat oleh Ketua KUB (mengajukan atas nama umat di KUB-nya)
+    // =========================================================================
+
+    public function createUmatKub(): View
+    {
+        $ketuaUmat = auth()->user()->umat;
+        abort_if(!$ketuaUmat, 403, 'Akun belum terhubung ke data umat.');
+
+        $kub = \App\Models\Kub::where('ketua_umat_id', $ketuaUmat->id)->firstOrFail();
+
+        // Daftar umat aktif dalam KUB ini (kecuali ketua sendiri)
+        $keluargaIds = Keluarga::where('kub_id', $kub->id)->pluck('id');
+        $umatList    = \App\Models\Umat::aktif()
+            ->whereIn('keluarga_id', $keluargaIds)
+            ->orderBy('nama')
+            ->with('keluarga.kepalaKeluarga')
+            ->get();
+
+        $keluargaList  = Keluarga::with(['kepalaKeluarga', 'kub'])->orderBy('id')->get();
+        $parokiList    = Paroki::orderBy('nama')->get();
+        $keuskupanList = Keuskupan::orderBy('nama')->get();
+
+        return view('portal.mutasi.create-umat-kub', compact(
+            'kub', 'umatList', 'keluargaList', 'parokiList', 'keuskupanList'
+        ));
+    }
+
+    public function storeUmatKub(Request $request): RedirectResponse
+    {
+        $ketuaUmat = auth()->user()->umat;
+        abort_if(!$ketuaUmat, 403);
+
+        $kub = \App\Models\Kub::where('ketua_umat_id', $ketuaUmat->id)->firstOrFail();
+
+        $validated = $request->validate([
+            'umat_id'                    => ['required', 'exists:umat,id'],
+            'sub_jenis'                  => ['required', 'in:pindah_keluarga_ada,pindah_keluarga_baru,paroki,keuskupan'],
+            'tanggal'                    => ['required', 'date'],
+            'nomor_surat'                => ['nullable', 'string', 'max:100'],
+            'keterangan'                 => ['nullable', 'string', 'max:1000'],
+            'keluarga_tujuan_id'         => ['nullable', 'exists:keluarga,id'],
+            'alamat_baru'                => ['nullable', 'string'],
+            'status_tempat_tinggal_baru' => ['nullable', 'in:Rumah Pribadi,Kontrak/Kost,Dinas'],
+            'paroki_tujuan_id'           => ['nullable', 'exists:paroki,id'],
+            'keuskupan_tujuan_id'        => ['nullable', 'exists:keuskupan,id'],
+        ]);
+
+        // Pastikan umat yang dipilih benar-benar berada dalam KUB ketua ini
+        $keluargaIds = Keluarga::where('kub_id', $kub->id)->pluck('id');
+        $targetUmat  = \App\Models\Umat::aktif()
+            ->whereIn('keluarga_id', $keluargaIds)
+            ->findOrFail($validated['umat_id']);
+
+        // Ambil hierarki asal dari umat target
+        $umatFull = \App\Models\Umat::aktif()->with([
+            'keluarga.kub.wilayah.paroki.keuskupan',
+            'keluarga.kub.wilayah.stasi.paroki.keuskupan',
+            'keluarga.kub.wilayah.stasi.kuasi.keuskupan',
+            'keluarga.kub.wilayah.kuasi.keuskupan',
+        ])->findOrFail($targetUmat->id);
+
+        $keluargaAsal = $umatFull->keluarga;
+        $kubAsal      = $keluargaAsal?->kub;
+        $wilayah      = $kubAsal?->wilayah;
+        [$paroki, $keuskupan] = $this->resolveHierarchy($wilayah);
+
+        $mutasi = Mutasi::create([
+            'jenis'           => 'umat',
+            'tanggal'         => $validated['tanggal'],
+            'keterangan'      => $validated['keterangan'] ?? null,
+            'status'          => 'pending',
+            'pemohon_umat_id' => $ketuaUmat->id,
+        ]);
+
+        MutasiUmat::create([
+            'mutasi_id'                  => $mutasi->id,
+            'umat_id'                    => $targetUmat->id,
+            'sub_jenis'                  => $validated['sub_jenis'],
+            'nomor_surat'                => $validated['nomor_surat'] ?? null,
+            'keluarga_asal_id'           => $keluargaAsal?->id,
+            'keluarga_tujuan_id'         => $validated['keluarga_tujuan_id'] ?? null,
+            'kub_asal_id'                => $kubAsal?->id,
+            'wilayah_asal_id'            => $wilayah?->id,
+            'paroki_asal_id'             => $paroki?->id,
+            'paroki_tujuan_id'           => $validated['paroki_tujuan_id'] ?? null,
+            'keuskupan_asal_id'          => $keuskupan?->id,
+            'keuskupan_tujuan_id'        => $validated['keuskupan_tujuan_id'] ?? null,
+            'alamat_baru'                => $validated['alamat_baru'] ?? null,
+            'status_tempat_tinggal_baru' => $validated['status_tempat_tinggal_baru'] ?? null,
+        ]);
+
+        return redirect()->route('portal.mutasi.index')
+            ->with('success', "Request mutasi umat atas nama <strong>{$targetUmat->nama}</strong> berhasil dikirim. Menunggu persetujuan sekretariat.");
+    }
 }

@@ -38,6 +38,7 @@ use App\Http\Controllers\Portal\UmatController as PortalUmatController;
 use App\Http\Controllers\Portal\KategorialController as PortalKategorialController;
 use App\Http\Controllers\Portal\MutasiRequestController;
 use App\Http\Controllers\Portal\PendaftaranController as PortalPendaftaranController;
+use App\Http\Controllers\Portal\SakramenAnggotaController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -191,6 +192,9 @@ Route::middleware(['auth', 'role:umat,ketua_kub,ketua_kategorial'])
             Route::post('/agama/ajukan', [MutasiRequestController::class, 'storeAgama'])->name('agama.store');
             Route::get('/keluarga/ajukan', [MutasiRequestController::class, 'createKeluarga'])->name('keluarga.create');
             Route::post('/keluarga/ajukan', [MutasiRequestController::class, 'storeKeluarga'])->name('keluarga.store');
+            // Ketua KUB: ajukan mutasi atas nama umat di KUB-nya
+            Route::get('/umat-kub/ajukan', [MutasiRequestController::class, 'createUmatKub'])->name('umat-kub.create');
+            Route::post('/umat-kub/ajukan', [MutasiRequestController::class, 'storeUmatKub'])->name('umat-kub.store');
         });
 
         // Edit data pribadi (semua role portal)
@@ -233,6 +237,36 @@ Route::middleware(['auth', 'role:umat,ketua_kub,ketua_kategorial'])
             Route::post('minyak-suci', [\App\Http\Controllers\Portal\SakramenSayaController::class, 'storeMinyakSuci'])->name('minyak-suci.store');
             Route::get('minyak-suci/{sakramen}/edit', [\App\Http\Controllers\Portal\SakramenSayaController::class, 'editMinyakSuci'])->name('minyak-suci.edit');
             Route::put('minyak-suci/{sakramen}', [\App\Http\Controllers\Portal\SakramenSayaController::class, 'updateMinyakSuci'])->name('minyak-suci.update');
+        });
+
+        // ── Sakramen Anggota Keluarga (hanya kepala keluarga — dicek di controller) ──
+        Route::prefix('keluarga-saya/anggota/{anggota}/sakramen')->name('sakramen-anggota.')->group(function () {
+            Route::get('/', [SakramenAnggotaController::class, 'index'])->name('index');
+            // Baptis
+            Route::get('baptis', [SakramenAnggotaController::class, 'showBaptis'])->name('baptis');
+            Route::post('baptis', [SakramenAnggotaController::class, 'storeBaptis'])->name('baptis.store');
+            Route::get('baptis/edit', [SakramenAnggotaController::class, 'editBaptis'])->name('baptis.edit');
+            Route::put('baptis', [SakramenAnggotaController::class, 'updateBaptis'])->name('baptis.update');
+            // Komuni Pertama
+            Route::get('komuni-pertama', [SakramenAnggotaController::class, 'showKomuni'])->name('komuni');
+            Route::post('komuni-pertama', [SakramenAnggotaController::class, 'storeKomuni'])->name('komuni.store');
+            Route::get('komuni-pertama/edit', [SakramenAnggotaController::class, 'editKomuni'])->name('komuni.edit');
+            Route::put('komuni-pertama', [SakramenAnggotaController::class, 'updateKomuni'])->name('komuni.update');
+            // Krisma
+            Route::get('krisma', [SakramenAnggotaController::class, 'showKrisma'])->name('krisma');
+            Route::post('krisma', [SakramenAnggotaController::class, 'storeKrisma'])->name('krisma.store');
+            Route::get('krisma/edit', [SakramenAnggotaController::class, 'editKrisma'])->name('krisma.edit');
+            Route::put('krisma', [SakramenAnggotaController::class, 'updateKrisma'])->name('krisma.update');
+            // Pernikahan
+            Route::get('pernikahan', [SakramenAnggotaController::class, 'showPernikahan'])->name('pernikahan');
+            Route::post('pernikahan', [SakramenAnggotaController::class, 'storePernikahan'])->name('pernikahan.store');
+            Route::get('pernikahan/edit', [SakramenAnggotaController::class, 'editPernikahan'])->name('pernikahan.edit');
+            Route::put('pernikahan', [SakramenAnggotaController::class, 'updatePernikahan'])->name('pernikahan.update');
+            // Minyak Suci (multiple)
+            Route::get('minyak-suci', [SakramenAnggotaController::class, 'indexMinyakSuci'])->name('minyak-suci');
+            Route::post('minyak-suci', [SakramenAnggotaController::class, 'storeMinyakSuci'])->name('minyak-suci.store');
+            Route::get('minyak-suci/{sakramen}/edit', [SakramenAnggotaController::class, 'editMinyakSuci'])->name('minyak-suci.edit');
+            Route::put('minyak-suci/{sakramen}', [SakramenAnggotaController::class, 'updateMinyakSuci'])->name('minyak-suci.update');
         });
 
         // ── Fitur Ketua KUB ───────────────────────────────────────────────────

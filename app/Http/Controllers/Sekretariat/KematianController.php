@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Sekretariat;
 
 use App\Http\Controllers\Controller;
+use App\Models\AnggotaKategorial;
 use App\Models\Kematian;
 use App\Models\Umat;
 use App\Models\User;
@@ -54,8 +55,19 @@ class KematianController extends Controller
             Umat::where('id', $validated['umat_id'])
                 ->update(['status_almarhum' => true]);
 
+            // Update status keanggotaan kategorial menjadi Tidak Aktif
+            AnggotaKategorial::where('umat_id', $validated['umat_id'])
+                ->where('status', 'Aktif')
+                ->update(['status' => 'Tidak Aktif']);
+
             // Hapus akun login (User) almarhum agar tidak bisa login lagi
             User::where('umat_id', $validated['umat_id'])->delete();
+
+            // Otomatis sesuaikan kepala keluarga jika almarhum sebelumnya adalah kepala keluarga
+            $umatAlmarhum = Umat::find($validated['umat_id']);
+            if ($umatAlmarhum && $umatAlmarhum->keluarga) {
+                $umatAlmarhum->keluarga->autoSetKepalaKeluarga(true);
+            }
         });
 
         return redirect()
@@ -108,11 +120,26 @@ class KematianController extends Controller
                 Umat::where('id', $umatLama)->update(['status_almarhum' => false]);
                 Umat::where('id', $validated['umat_id'])->update(['status_almarhum' => true]);
 
+                // Update status keanggotaan kategorial menjadi Tidak Aktif
+                AnggotaKategorial::where('umat_id', $validated['umat_id'])
+                    ->where('status', 'Aktif')
+                    ->update(['status' => 'Tidak Aktif']);
+
                 // Hapus akun login (User) untuk umat baru
                 User::where('umat_id', $validated['umat_id'])->delete();
 
                 // Pulihkan akun login (User) untuk umat lama jika sebelumnya di-softdelete
                 User::withTrashed()->where('umat_id', $umatLama)->restore();
+
+                // Sesuaikan kepala keluarga untuk umat lama dan umat baru
+                $umatLamaObj = Umat::find($umatLama);
+                if ($umatLamaObj && $umatLamaObj->keluarga) {
+                    $umatLamaObj->keluarga->autoSetKepalaKeluarga(true);
+                }
+                $umatBaruObj = Umat::find($validated['umat_id']);
+                if ($umatBaruObj && $umatBaruObj->keluarga) {
+                    $umatBaruObj->keluarga->autoSetKepalaKeluarga(true);
+                }
             }
         });
 
@@ -132,6 +159,12 @@ class KematianController extends Controller
             User::withTrashed()->where('umat_id', $kematian->umat_id)->restore();
 
             $kematian->delete();
+
+            // Sesuaikan kepala keluarga setelah data kematian dihapus
+            $umatPulih = Umat::find($kematian->umat_id);
+            if ($umatPulih && $umatPulih->keluarga) {
+                $umatPulih->keluarga->autoSetKepalaKeluarga(true);
+            }
         });
 
         return redirect()

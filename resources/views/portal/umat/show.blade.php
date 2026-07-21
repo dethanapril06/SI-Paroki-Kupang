@@ -59,6 +59,9 @@
                                 <a href="{{ route('portal.umat.edit', $umat) }}" class="btn btn-outline-primary btn-sm">
                                     <i class="bi bi-pencil-square me-1"></i>Edit Data
                                 </a>
+                                <a href="{{ route('portal.mutasi.umat-kub.create', ['umat_id' => $umat->id]) }}" class="btn btn-outline-warning btn-sm">
+                                    <i class="bi bi-arrow-left-right me-1"></i>Ajukan Mutasi
+                                </a>
                                 <form action="{{ route('portal.umat.destroy', $umat) }}" method="POST"
                                     onsubmit="return confirm('Yakin hapus data {{ $umat->nama }}?')">
                                     @csrf @method('DELETE')

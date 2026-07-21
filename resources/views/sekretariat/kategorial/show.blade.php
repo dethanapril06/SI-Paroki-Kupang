@@ -124,7 +124,10 @@
                                         </td>
                                         <td>{{ $anggota->bidang_tugas ?? '-' }}</td>
                                         <td>
-                                            @if ($anggota->status === 'Aktif')
+                                            @if ($anggota->umat?->status_almarhum)
+                                                <span class="badge bg-secondary mb-1">Tidak Aktif</span>
+                                                <span class="badge bg-dark">Almarhum</span>
+                                            @elseif ($anggota->status === 'Aktif')
                                                 <span class="badge bg-success">Aktif</span>
                                             @else
                                                 <span class="badge bg-secondary">Tidak Aktif</span>

@@ -39,6 +39,11 @@
                 </div>
                 <div class="card-content">
                     <div class="card-body">
+                        <div class="alert alert-light-info color-info mb-3">
+                            <i class="bi bi-info-circle-fill me-2"></i>
+                            Untuk memindahkan anggota ini ke Keluarga/KUB lain, gunakan menu <strong>Mutasi Anggota/Umat</strong> agar riwayat perpindahan selalu tercatat di sistem.
+                        </div>
+
                         @if ($errors->any())
                             <div class="alert alert-light-danger color-danger alert-dismissible fade show" role="alert">
                                 <ul class="mb-0">

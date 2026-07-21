@@ -8,7 +8,7 @@
             <div class="row">
                 <div class="col-12 col-md-6 order-md-1 order-last">
                     <h3>Tambah Anggota Keluarga</h3>
-                    <p class="text-muted">Daftarkan anggota baru dalam keluarga Anda.</p>
+                    <p class="text-muted">Daftarkan anggota baru dalam keluarga Anda. Email bersifat opsional untuk bayi/anak kecil.</p>
                 </div>
                 <div class="col-12 col-md-6 order-md-2 order-first">
                     <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
@@ -233,21 +233,24 @@
                                 </div>
 
                                 {{-- ── AKUN LOGIN ── --}}
-                                <h6 class="fw-bold text-muted mb-3 border-bottom pb-2">Akun Login</h6>
+                                <h6 class="fw-bold text-muted mb-3 border-bottom pb-2">Akun Login <span class="badge bg-light-secondary text-secondary fw-normal">Opsional</span></h6>
+                                <div class="alert alert-light-info color-info py-2 mb-3">
+                                    <i class="bi bi-info-circle-fill me-2"></i>
+                                    <strong>Untuk bayi atau anak kecil</strong>, biarkan email kosong — data tetap tersimpan tanpa akun login.
+                                    Akun dapat ditambahkan nanti jika sudah diperlukan.
+                                </div>
                                 <div class="row g-3 mb-4">
                                     <div class="col-md-8">
-                                        <label for="email" class="form-label">
-                                            Email <span class="text-danger">*</span>
-                                        </label>
+                                        <label for="email" class="form-label">Email</label>
                                         <input type="email" name="email" id="email"
                                             class="form-control @error('email') is-invalid @enderror"
-                                            value="{{ old('email') }}" placeholder="email@contoh.com">
+                                            value="{{ old('email') }}" placeholder="Kosongkan jika tidak memiliki email">
                                         @error('email')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                         <div class="form-text text-muted">
-                                            <i class="bi bi-info-circle me-1"></i>
-                                            Password default: <code>password</code> (bisa diubah setelah login)
+                                            <i class="bi bi-key me-1"></i>
+                                            Jika email diisi, password default: <code>password</code> (bisa diubah setelah login)
                                         </div>
                                     </div>
                                 </div>

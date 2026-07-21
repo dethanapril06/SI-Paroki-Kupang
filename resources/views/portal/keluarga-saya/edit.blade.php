@@ -90,16 +90,18 @@
                                         <label for="kepala_keluarga_id" class="form-label">
                                             Kepala Keluarga
                                         </label>
+                                        @php
+                                            $rekomendasiId = $keluarga->getRekomendasiKepalaKeluarga()?->id;
+                                            $selectedId = old('kepala_keluarga_id', $keluarga->kepala_keluarga_id ?? $rekomendasiId);
+                                        @endphp
                                         <select name="kepala_keluarga_id" id="kepala_keluarga_id"
                                             class="form-select @error('kepala_keluarga_id') is-invalid @enderror">
-                                            <option value="">-- Pilih --</option>
+                                            <option value="">-- Pilih Kepala Keluarga (Otomatis) --</option>
                                             @foreach ($anggota as $a)
                                                 <option value="{{ $a->id }}"
-                                                    {{ old('kepala_keluarga_id', $keluarga->kepala_keluarga_id) == $a->id ? 'selected' : '' }}>
-                                                    {{ $a->nama }}
-                                                    @if ($a->hubungan_keluarga)
-                                                        ({{ $a->hubungan_keluarga }})
-                                                    @endif
+                                                    {{ $selectedId == $a->id ? 'selected' : '' }}>
+                                                    [{{ $a->hubungan_keluarga }}] {{ $a->nama }}
+                                                    @if ($rekomendasiId == $a->id) (Prioritas Utama) @endif
                                                 </option>
                                             @endforeach
                                         </select>
@@ -108,6 +110,7 @@
                                         @enderror
                                         <div class="form-text text-muted">
                                             <i class="bi bi-info-circle me-1"></i>
+                                            Urutan prioritas: <strong>Suami -> Istri -> Anak -> Lainnya</strong>.<br>
                                             Mengubah kepala keluarga akan memindahkan hak edit keluarga ke orang tersebut.
                                         </div>
                                     </div>

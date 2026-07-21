@@ -56,14 +56,17 @@
 
                                     {{-- KUB --}}
                                     <div class="col-12">
+                                        <div class="alert alert-light-info color-info py-2 mb-2">
+                                            <i class="bi bi-info-circle-fill me-2"></i>
+                                            <strong>KUB tidak dapat diubah langsung di form ini.</strong> Untuk memindahkan keluarga ke KUB lain, gunakan menu <strong>Mutasi Keluarga</strong> agar riwayat perpindahan tercatat di sistem.
+                                        </div>
                                         <div class="form-group">
-                                            <label for="kub_id">KUB <span class="text-danger">*</span></label>
-                                            <select class="form-select @error('kub_id') is-invalid @enderror"
-                                                id="kub_id" name="kub_id">
-                                                <option value="">-- Pilih KUB --</option>
+                                            <label for="kub_id_disabled">KUB</label>
+                                            <input type="hidden" name="kub_id" value="{{ $keluarga->kub_id }}">
+                                            <select class="form-select bg-light" id="kub_id_disabled" disabled>
                                                 @foreach ($kub as $item)
                                                     <option value="{{ $item->id }}"
-                                                        {{ old('kub_id', $keluarga->kub_id) == $item->id ? 'selected' : '' }}>
+                                                        {{ $keluarga->kub_id == $item->id ? 'selected' : '' }}>
                                                         {{ $item->nama }}
                                                         @if ($item->wilayah)
                                                             (Wilayah: {{ $item->wilayah->nama }})
@@ -71,9 +74,6 @@
                                                     </option>
                                                 @endforeach
                                             </select>
-                                            @error('kub_id')
-                                                <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
                                         </div>
                                     </div>
 
@@ -121,17 +121,25 @@
                                                     Tambahkan anggota terlebih dahulu untuk menetapkan kepala keluarga.
                                                 </div>
                                             @else
+                                                @php
+                                                    $rekomendasiId = $keluarga->getRekomendasiKepalaKeluarga()?->id;
+                                                    $selectedId = old('kepala_keluarga_id', $keluarga->kepala_keluarga_id ?? $rekomendasiId);
+                                                @endphp
                                                 <select class="form-select @error('kepala_keluarga_id') is-invalid @enderror"
                                                     id="kepala_keluarga_id" name="kepala_keluarga_id">
-                                                    <option value="">-- Pilih Kepala Keluarga --</option>
+                                                    <option value="">-- Pilih Kepala Keluarga (Otomatis) --</option>
                                                     @foreach ($anggota as $umat)
                                                         <option value="{{ $umat->id }}"
-                                                            {{ old('kepala_keluarga_id', $keluarga->kepala_keluarga_id) == $umat->id ? 'selected' : '' }}>
-                                                            {{ $umat->nama }}
-                                                            ({{ $umat->hubungan_keluarga }}, {{ $umat->jenis_kelamin }})
+                                                            {{ $selectedId == $umat->id ? 'selected' : '' }}>
+                                                            [{{ $umat->hubungan_keluarga }}] {{ $umat->nama }}
+                                                            @if ($rekomendasiId == $umat->id) (Prioritas Utama) @endif
                                                         </option>
                                                     @endforeach
                                                 </select>
+                                                <small class="text-muted d-block mt-1">
+                                                    <i class="bi bi-info-circle me-1"></i>
+                                                    Urutan prioritas: <strong>Suami -> Istri -> Anak -> Lainnya</strong>.
+                                                </small>
                                                 @error('kepala_keluarga_id')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror

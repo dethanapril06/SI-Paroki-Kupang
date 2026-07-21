@@ -39,6 +39,11 @@
                         <a href="{{ route('portal.mutasi.agama.create') }}" class="btn btn-warning">
                             <i class="bi bi-cross"></i> Ajukan Mutasi Agama
                         </a>
+                        @if (auth()->user()->isKetuaKub())
+                            <a href="{{ route('portal.mutasi.umat-kub.create') }}" class="btn btn-primary">
+                                <i class="bi bi-people-fill"></i> Ajukan Mutasi Umat KUB
+                            </a>
+                        @endif
                     </div>
                 </div>
             </div>
