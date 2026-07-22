@@ -324,11 +324,7 @@
 
                                 {{-- ===== AKUN LOGIN ===== --}}
                                 <hr>
-                                <h6 class="text-muted fw-bold text-uppercase mb-3">Akun Login <span class="badge bg-light-secondary text-secondary fw-normal text-lowercase">Opsional</span></h6>
-                                <div class="alert alert-light-info mb-3 py-2">
-                                    <i class="bi bi-info-circle-fill me-2"></i>
-                                    <strong>Untuk bayi atau anak kecil</strong>, biarkan email kosong &mdash; data tetap tersimpan tanpa akun login.
-                                </div>
+                                <h6 class="text-muted fw-bold text-uppercase mb-3">Akun Login <span class="badge bg-light-danger text-danger fw-normal text-lowercase">Wajib</span></h6>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">

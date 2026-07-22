@@ -233,12 +233,7 @@
                                 </div>
 
                                 {{-- ── AKUN LOGIN ── --}}
-                                <h6 class="fw-bold text-muted mb-3 border-bottom pb-2">Akun Login <span class="badge bg-light-secondary text-secondary fw-normal">Opsional</span></h6>
-                                <div class="alert alert-light-info color-info py-2 mb-3">
-                                    <i class="bi bi-info-circle-fill me-2"></i>
-                                    <strong>Untuk bayi atau anak kecil</strong>, biarkan email kosong — data tetap tersimpan tanpa akun login.
-                                    Akun dapat ditambahkan nanti jika sudah diperlukan.
-                                </div>
+                                <h6 class="fw-bold text-muted mb-3 border-bottom pb-2">Akun Login <span class="badge bg-light-danger text-danger fw-normal">Wajib</span></h6>
                                 <div class="row g-3 mb-4">
                                     <div class="col-md-8">
                                         <label for="email" class="form-label">Email</label>

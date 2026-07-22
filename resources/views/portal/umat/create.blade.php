@@ -159,14 +159,11 @@
                             <div class="card-header">
                                 <h5 class="card-title mb-0">
                                     <i class="bi bi-key-fill me-2 text-warning"></i>Akun Login
-                                    <span class="badge bg-light-secondary text-secondary fw-normal ms-2">Opsional</span>
+                                    <span class="badge bg-light-danger text-danger fw-normal ms-2">Wajib</span>
                                 </h5>
                             </div>
                             <div class="card-body">
-                                <div class="alert alert-light-info py-2 mb-3">
-                                    <i class="bi bi-info-circle-fill me-2"></i>
-                                    <strong>Untuk bayi atau anak kecil</strong>, biarkan email kosong &mdash; data tetap tersimpan tanpa akun login.
-                                </div>
+
                                 <div class="col-md-8">
                                     <label for="email" class="form-label">Email</label>
                                     <input type="email" name="email" id="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" placeholder="Kosongkan jika tidak memiliki email">

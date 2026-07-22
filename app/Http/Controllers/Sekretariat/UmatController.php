@@ -93,7 +93,7 @@ class UmatController extends Controller
             'penyandang_disabilitas' => ['boolean'],
             'status_almarhum'        => ['boolean'],
             'keterangan_lain'        => ['boolean'],
-            'email'                  => ['nullable', 'email', 'unique:users,email'],
+            'email'                  => ['required', 'email', 'unique:users,email'],
         ]);
 
         $validated['penyandang_disabilitas'] = $request->boolean('penyandang_disabilitas');
@@ -165,7 +165,7 @@ class UmatController extends Controller
             'status_almarhum'        => ['boolean'],
             'keterangan_lain'        => ['boolean'],
             // Akun login
-            'email'                  => ['nullable', 'email', 'unique:users,email'],
+            'email'                  => ['required', 'email', 'unique:users,email'],
         ]);
 
         $validated['keluarga_id']            = $keluarga->id;

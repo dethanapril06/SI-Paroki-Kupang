@@ -205,6 +205,11 @@
 
                 <h1 class="auth-title">Daftarkan Diri</h1>
                 <p class="auth-subtitle text-muted">Isi data berikut untuk mendaftarkan diri ke sistem paroki. Pendaftaran Anda akan ditinjau oleh Ketua KUB.</p>
+                
+                <div class="alert alert-light-info color-info py-2 mb-4">
+                    <i class="bi bi-info-circle-fill me-2"></i>
+                    <strong>Perhatian:</strong> Pendaftaran akun mandiri hanya diperbolehkan untuk umat berusia <strong>10 tahun ke atas</strong>. Untuk anak di bawah 10 tahun, silakan hubungi Kepala Keluarga, Ketua KUB, atau Sekretariat Paroki.
+                </div>
 
                 {{-- Error umum --}}
                 @if ($errors->any())

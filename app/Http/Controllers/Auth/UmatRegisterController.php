@@ -62,7 +62,11 @@ class UmatRegisterController extends Controller
             // Data pribadi
             'nama'                   => ['required', 'string', 'max:255'],
             'tempat_lahir'           => ['required', 'string', 'max:255'],
-            'tanggal_lahir'          => ['required', 'date'],
+            'tanggal_lahir'          => ['required', 'date', function ($attribute, $value, $fail) {
+                if (\Carbon\Carbon::parse($value)->age < 10) {
+                    $fail('Anak di bawah 10 tahun tidak dapat mendaftar akun sendiri. Silakan hubungi Kepala Keluarga, Ketua KUB, atau Sekretariat Paroki.');
+                }
+            }],
             'jenis_kelamin'          => ['required', 'in:Laki-laki,Perempuan'],
             'hubungan_keluarga'      => ['required', 'in:Suami,Istri,Anak,Saudara,Ayah,Ibu,Lainnya'],
             'status_pernikahan'      => ['required', 'in:Belum Kawin,Kawin,Cerai Hidup,Cerai Mati'],

@@ -60,7 +60,7 @@ class AnggotaKeluargaController extends Controller
             'pendidikan'             => ['nullable', 'in:Tidak Sekolah,SD,SMP,SMA,D3,S1,S2,S3'],
             'pekerjaan'              => ['nullable', 'string', 'max:255'],
             'penyandang_disabilitas' => ['boolean'],
-            'email'                  => ['nullable', 'email', 'unique:users,email'],
+            'email'                  => ['required', 'email', 'unique:users,email'],
         ]);
 
         $validated['keluarga_id']            = $keluarga->id;
