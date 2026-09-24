@@ -47,21 +47,22 @@ class DashboardController extends Controller
         $pendingMutasi = Mutasi::where('pemohon_umat_id', $umat?->id)->pending()->count();
 
         // ── Data KUB (hanya jika ketua_kub) ─────────────────────────────────
-        $kubSaya      = null;
-        $kubStats     = null;
-        $daftarKeluarga = collect();
+        $kubSaya              = null;
+        $kubStats             = null;
+        $daftarKeluarga       = collect();
+        $notifMutasiDisetujui = collect();
 
         if ($user->isKetuaKub()) {
             $kubSaya = Kub::where('ketua_umat_id', $user->umat_id)->first();
 
             if ($kubSaya) {
-                $keluargaIds = Keluarga::where('kub_id', $kubSaya->id)->pluck('id');
+                $keluargaIds = Keluarga::withTrashed()->where('kub_id', $kubSaya->id)->pluck('id');
                 $umatIds     = Umat::aktif()->whereIn('keluarga_id', $keluargaIds)->pluck('id');
                 $tahunIni    = now()->year;
 
                 $kubStats = [
                     'total_umat'     => Umat::whereIn('keluarga_id', $keluargaIds)->where('status_almarhum', false)->where('status_keaktifan', 'aktif')->count(),
-                    'total_keluarga' => $keluargaIds->count(),
+                    'total_keluarga' => Keluarga::where('kub_id', $kubSaya->id)->count(),
                     'laki_laki'      => Umat::whereIn('keluarga_id', $keluargaIds)->where('jenis_kelamin', 'Laki-laki')->where('status_almarhum', false)->where('status_keaktifan', 'aktif')->count(),
                     'perempuan'      => Umat::whereIn('keluarga_id', $keluargaIds)->where('jenis_kelamin', 'Perempuan')->where('status_almarhum', false)->where('status_keaktifan', 'aktif')->count(),
                     'mutasi_tahun'   => Mutasi::whereYear('tanggal', $tahunIni)->where(function ($q) use ($umatIds, $keluargaIds) {
@@ -76,6 +77,32 @@ class DashboardController extends Controller
                 $daftarKeluarga = Keluarga::with(['kepalaKeluarga' => fn($q) => $q->aktif()])
                     ->withCount(['umat as total_umat' => fn($q) => $q->aktif()->where('status_almarhum', false)])
                     ->where('kub_id', $kubSaya->id)->latest()->get();
+
+                // Notifikasi mutasi yang disetujui keluar dari KUB ini
+                $notifMutasiDisetujui = Mutasi::where('status', 'disetujui')
+                    ->where(function ($q) use ($kubSaya, $keluargaIds) {
+                        $q->whereHas('mutasiUmat', function ($m) use ($kubSaya, $keluargaIds) {
+                            $m->where('kub_asal_id', $kubSaya->id)
+                              ->orWhereIn('keluarga_asal_id', $keluargaIds);
+                        })
+                        ->orWhereHas('mutasiKeluarga', function ($m) use ($kubSaya, $keluargaIds) {
+                            $m->where('kub_asal_id', $kubSaya->id)
+                              ->orWhereIn('keluarga_id', $keluargaIds);
+                        });
+                    })
+                    ->with([
+                        'mutasiUmat.umat',
+                        'mutasiUmat.parokiTujuan',
+                        'mutasiUmat.keuskupanTujuan',
+                        'mutasiUmat.kubTujuan',
+                        'mutasiKeluarga.keluarga.kepalaKeluarga',
+                        'mutasiKeluarga.parokiTujuan',
+                        'mutasiKeluarga.kubTujuan',
+                        'diprosesOleh',
+                    ])
+                    ->latest('diproses_pada')
+                    ->take(10)
+                    ->get();
             }
         }
 
@@ -123,7 +150,7 @@ class DashboardController extends Controller
             'umat', 'keluarga', 'kub', 'wilayah',
             'sakramenDiterima', 'kategorialAktif',
             'mutasiTerbaru', 'pendingMutasi',
-            'kubSaya', 'kubStats', 'daftarKeluarga',
+            'kubSaya', 'kubStats', 'daftarKeluarga', 'notifMutasiDisetujui',
             'kategorialDiPimpin',
             'isKetuaKeluarga', 'keluargaStats', 'anggotaSakramenDetail',
         ));

@@ -281,7 +281,7 @@
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" style="min-width: 11rem">
                                     <li>
-                                        <h6 class="dropdown-header">Hello, {{ auth()->user()->name }}!</h6>
+                                        <h6 class="dropdown-header">Halo, {{ auth()->user()->name }}!</h6>
                                     </li>
                                     <li>
                                         <a class="dropdown-item" href="{{ route('profile.edit') }}">
@@ -295,7 +295,7 @@
                                         <form method="POST" action="{{ route('logout') }}">
                                             @csrf
                                             <button type="submit" class="dropdown-item text-danger">
-                                                <i class="icon-mid bi bi-box-arrow-left me-2"></i>Logout
+                                                <i class="icon-mid bi bi-box-arrow-left me-2"></i>Keluar
                                             </button>
                                         </form>
                                     </li>

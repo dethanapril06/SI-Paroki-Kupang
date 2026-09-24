@@ -49,12 +49,12 @@
             </div>
 
             @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
-                <div class="alert alert-warning d-flex align-items-center mt-2 py-2" role="alert">
+                <div class="alert alert-light-danger color-danger border border-danger d-flex align-items-center mt-2 py-2" role="alert">
                     <i class="bi bi-exclamation-triangle-fill me-2"></i>
                     <div>
-                        Email Anda belum terverifikasi.
+                        <strong>Perhatian:</strong> Email Anda belum terverifikasi.
                         <button form="send-verification"
-                            class="btn btn-link p-0 ms-1 align-baseline text-warning fw-semibold">
+                            class="btn btn-link p-0 ms-1 align-baseline text-danger fw-semibold">
                             Kirim ulang verifikasi
                         </button>
                     </div>

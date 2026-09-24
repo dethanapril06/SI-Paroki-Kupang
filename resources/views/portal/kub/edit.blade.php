@@ -1,6 +1,6 @@
 @extends('layouts.portal') {{-- Pastikan menggunakan layout ketua_kub --}}
 
-@section('title', 'Edit Nama KUB –')
+@section('title', 'Edit Nama KUB')
 
 @section('content')
     <div class="page-heading">

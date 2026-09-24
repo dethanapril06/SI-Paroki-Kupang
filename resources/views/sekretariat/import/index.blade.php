@@ -89,8 +89,8 @@
                     @endforeach
                 </div>
                 <p class="text-muted mt-3 mb-0 small">
-                    <i class="bi bi-exclamation-triangle me-1 text-warning"></i>
-                    Jika data parent belum ada (misal: KUB belum diimport saat import Keluarga), import akan dihentikan dengan pesan error.
+                    <i class="bi bi-exclamation-triangle-fill me-1 text-danger"></i>
+                    <strong class="text-danger">Perhatian:</strong> Jika data parent belum ada (misal: KUB belum diimport saat import Keluarga), import akan dihentikan dengan pesan error.
                 </p>
             </div>
         </div>
@@ -127,11 +127,11 @@
                                 </div>
                                 <div class="card-body d-flex flex-column gap-3">
 
-                                    {{-- Download Template --}}
+                                    {{-- Unduh Templat --}}
                                     <a href="{{ route('sekretariat.import.template', $jenis) }}"
                                        class="btn btn-outline-success w-100"
                                        id="btn-template-{{ $jenis }}">
-                                        <i class="bi bi-file-earmark-excel me-2"></i>Download Template
+                                        <i class="bi bi-file-earmark-excel me-2"></i>Unduh Templat
                                     </a>
 
                                     {{-- Form Upload --}}
@@ -143,7 +143,7 @@
                                         @csrf
                                         <div class="mb-2">
                                             <label for="file-{{ $jenis }}" class="form-label small text-muted mb-1">
-                                                Upload file Excel (.xlsx)
+                                                Unggah file Excel (.xlsx)
                                             </label>
                                             <input type="file"
                                                    class="form-control form-control-sm"

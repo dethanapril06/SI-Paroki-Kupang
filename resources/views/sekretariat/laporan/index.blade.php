@@ -105,7 +105,7 @@
                                     class="btn btn-outline-primary d-flex align-items-center justify-content-center gap-2"
                                     style="border-color: #435ebe; color: #435ebe;"
                                     onclick="submitReport('sakramen', 'preview')">
-                                    <i class="bi bi-eye-fill"></i> Preview PDF
+                                    <i class="bi bi-eye-fill"></i> Pratinjau PDF
                                 </button>
                                 <button type="button"
                                     class="btn btn-primary d-flex align-items-center justify-content-center gap-2"
@@ -171,7 +171,7 @@
                                     class="btn btn-outline-primary d-flex align-items-center justify-content-center gap-2"
                                     style="border-color: #435ebe; color: #435ebe;"
                                     onclick="submitReport('umat', 'preview')">
-                                    <i class="bi bi-eye-fill"></i> Preview PDF
+                                    <i class="bi bi-eye-fill"></i> Pratinjau PDF
                                 </button>
                                 <button type="button"
                                     class="btn btn-primary d-flex align-items-center justify-content-center gap-2"
@@ -234,7 +234,7 @@
                                     class="btn btn-outline-primary d-flex align-items-center justify-content-center gap-2"
                                     style="border-color: #435ebe; color: #435ebe;"
                                     onclick="submitReport('mutasi', 'preview')">
-                                    <i class="bi bi-eye-fill"></i> Preview PDF
+                                    <i class="bi bi-eye-fill"></i> Pratinjau PDF
                                 </button>
                                 <button type="button"
                                     class="btn btn-primary d-flex align-items-center justify-content-center gap-2"
@@ -294,7 +294,7 @@
                                     class="btn btn-outline-primary d-flex align-items-center justify-content-center gap-2"
                                     style="border-color: #435ebe; color: #435ebe;"
                                     onclick="submitReport('organisasi', 'preview')">
-                                    <i class="bi bi-eye-fill"></i> Preview PDF
+                                    <i class="bi bi-eye-fill"></i> Pratinjau PDF
                                 </button>
                                 <button type="button"
                                     class="btn btn-primary d-flex align-items-center justify-content-center gap-2"
@@ -464,7 +464,7 @@
                 <button type="button" class="btn btn-light-secondary px-4 font-bold" data-bs-dismiss="modal">Tutup</button>
                 <div class="d-flex gap-2">
                     <button type="button" class="btn btn-outline-primary d-flex align-items-center gap-2 font-bold px-3" style="border-color: #435ebe; color: #435ebe;" onclick="submitModalFilterUmat('preview')">
-                        <i class="bi bi-eye-fill"></i> Preview PDF
+                        <i class="bi bi-eye-fill"></i> Pratinjau PDF
                     </button>
                     <button type="button" class="btn btn-primary d-flex align-items-center gap-2 font-bold px-3 shadow-sm" style="background-color: #435ebe; border-color: #435ebe;" onclick="submitModalFilterUmat('download')">
                         <i class="bi bi-file-earmark-pdf-fill"></i> Unduh PDF

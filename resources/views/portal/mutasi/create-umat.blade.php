@@ -115,9 +115,9 @@
 
                                 {{-- Pindah ke keluarga baru --}}
                                 <div id="section-pindah-keluarga-baru" class="d-none">
-                                    <div class="alert alert-light-warning color-warning p-3 mb-3">
-                                        <i class="bi bi-info-circle me-1"></i>
-                                        Sekretariat akan membuatkan KK baru berdasarkan informasi yang Anda berikan.
+                                    <div class="alert alert-light-danger color-danger border border-danger p-3 mb-3">
+                                        <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                                        <strong>Perhatian:</strong> Sekretariat akan membuatkan KK baru berdasarkan informasi yang Anda berikan.
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label fw-semibold">Alamat Baru <span class="text-danger">*</span></label>
@@ -138,6 +138,10 @@
 
                                 {{-- Pindah Paroki --}}
                                 <div id="section-paroki" class="d-none">
+                                    <div class="alert alert-light-danger color-danger border border-danger py-2 mb-3">
+                                        <i class="bi bi-exclamation-octagon-fill me-1"></i>
+                                        <strong>Perhatian:</strong> Permohonan pindah paroki yang disetujui akan menonaktifkan status keaktifan Anda dan menghapus akses login portal Anda di paroki ini.
+                                    </div>
                                     <div class="mb-3">
                                         <label class="form-label fw-semibold">Paroki Tujuan <span class="text-danger">*</span></label>
                                         <select name="paroki_tujuan_id" class="form-select @error('paroki_tujuan_id') is-invalid @enderror">
@@ -154,6 +158,10 @@
 
                                 {{-- Pindah Keuskupan --}}
                                 <div id="section-keuskupan" class="d-none">
+                                    <div class="alert alert-light-danger color-danger border border-danger py-2 mb-3">
+                                        <i class="bi bi-exclamation-octagon-fill me-1"></i>
+                                        <strong>Perhatian:</strong> Permohonan pindah keuskupan yang disetujui akan menonaktifkan status keaktifan Anda dan menghapus akses login portal Anda di paroki ini.
+                                    </div>
                                     <div class="mb-3">
                                         <label class="form-label fw-semibold">Keuskupan Tujuan <span class="text-danger">*</span></label>
                                         <select name="keuskupan_tujuan_id" class="form-select @error('keuskupan_tujuan_id') is-invalid @enderror">

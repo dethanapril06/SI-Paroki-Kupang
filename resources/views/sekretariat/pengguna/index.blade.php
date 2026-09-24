@@ -196,9 +196,9 @@
                             html: `Password <strong>${nama}</strong> akan direset menjadi <code>password</code>.`,
                             icon: 'warning',
                             showCancelButton: true,
-                            confirmButtonColor: '#f59e0b',
+                            confirmButtonColor: '#dc3545',
                             cancelButtonColor: '#6c757d',
-                            confirmButtonText: 'Ya, reset',
+                            confirmButtonText: 'Ya, Reset',
                             cancelButtonText: 'Batal'
                         }).then(function (result) {
                             if (result.isConfirmed) form.submit();

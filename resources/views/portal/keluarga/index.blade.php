@@ -1,6 +1,6 @@
 @extends('layouts.portal')
 
-@section('title', 'Daftar Keluarga –')
+@section('title', 'Daftar Keluarga')
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('template/assets/extensions/sweetalert2/sweetalert2.min.css') }}">

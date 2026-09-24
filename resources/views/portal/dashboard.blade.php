@@ -40,7 +40,7 @@
                             <div class="ms-auto text-end">
                                 <div class="badge bg-warning text-dark fs-6 px-3 py-2">
                                     <i class="bi bi-hourglass-split me-1"></i>
-                                    {{ $pendingMutasi }} Request Pending
+                                    {{ $pendingMutasi }} Permohonan Menunggu
                                 </div>
                             </div>
                         @endif
@@ -94,6 +94,82 @@
                     </div>
                 </div>
             </div>
+
+            {{-- Notifikasi Mutasi Keluar Disetujui untuk Ketua KUB --}}
+            @if(isset($notifMutasiDisetujui) && $notifMutasiDisetujui->isNotEmpty())
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="alert alert-light-danger color-danger border border-danger alert-dismissible fade show shadow-sm" role="alert">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-exclamation-triangle-fill text-danger fs-4 me-2"></i>
+                                <h6 class="alert-heading text-danger fw-bold mb-0">
+                                    Pemberitahuan Mutasi Disetujui (Data Dikeluarkan dari KUB)
+                                </h6>
+                            </div>
+                            <p class="small mb-2">
+                                Permohonan kepindahan untuk umat/keluarga berikut telah disetujui oleh Sekretariat Paroki. Data terkait secara otomatis telah <strong>dikeluarkan / dinonaktifkan</strong> dari daftar jemaat aktif KUB:
+                            </p>
+                            <div class="table-responsive bg-white rounded p-2 border border-danger-subtle">
+                                <table class="table table-sm table-borderless align-middle mb-0">
+                                    <thead>
+                                        <tr class="border-bottom text-muted small">
+                                            <th>Nama Umat / Keluarga</th>
+                                            <th>Jenis Kepindahan</th>
+                                            <th>Tujuan</th>
+                                            <th>Tgl Disetujui</th>
+                                            <th>Status di KUB</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($notifMutasiDisetujui as $nm)
+                                            <tr>
+                                                <td>
+                                                    <strong>
+                                                        @if($nm->jenis === 'umat')
+                                                            {{ $nm->mutasiUmat?->umat?->nama ?? 'Umat' }}
+                                                        @elseif($nm->jenis === 'keluarga')
+                                                            Keluarga {{ $nm->mutasiKeluarga?->keluarga?->kepalaKeluarga?->nama ?? '-' }}
+                                                        @else
+                                                            {{ $nm->mutasiAgama?->umat?->nama ?? 'Umat' }}
+                                                        @endif
+                                                    </strong>
+                                                </td>
+                                                <td>
+                                                    <span class="badge bg-danger">
+                                                        @if($nm->jenis === 'umat')
+                                                            {{ str_replace('_', ' ', ucwords($nm->mutasiUmat?->sub_jenis ?? 'Pindah')) }}
+                                                        @elseif($nm->jenis === 'keluarga')
+                                                            {{ str_replace('_', ' ', ucwords($nm->mutasiKeluarga?->sub_jenis ?? 'Pindah')) }}
+                                                        @else
+                                                            Mutasi Agama
+                                                        @endif
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    @if($nm->jenis === 'umat')
+                                                        {{ $nm->mutasiUmat?->parokiTujuan?->nama ?? $nm->mutasiUmat?->keuskupanTujuan?->nama ?? $nm->mutasiUmat?->kubTujuan?->nama ?? '-' }}
+                                                    @elseif($nm->jenis === 'keluarga')
+                                                        {{ $nm->mutasiKeluarga?->parokiTujuan?->nama ?? $nm->mutasiKeluarga?->kubTujuan?->nama ?? '-' }}
+                                                    @else
+                                                        -
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    {{ $nm->diproses_pada ? $nm->diproses_pada->translatedFormat('d M Y') : ($nm->updated_at ? $nm->updated_at->translatedFormat('d M Y') : '-') }}
+                                                </td>
+                                                <td>
+                                                    <span class="badge bg-light-danger text-danger border border-danger">Dihapus / Non-aktif</span>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    </div>
+                </div>
+            @endif
 
             {{-- Tabel keluarga dalam KUB --}}
             @if($daftarKeluarga->isNotEmpty())
@@ -556,7 +632,7 @@
                                             <td>
                                                 @if ($m->isPending())
                                                     <span class="badge bg-warning text-dark">
-                                                        <i class="bi bi-hourglass-split me-1"></i>Pending
+                                                        <i class="bi bi-hourglass-split me-1"></i>Menunggu
                                                     </span>
                                                 @elseif ($m->isDisetujui())
                                                     <span class="badge bg-success">

@@ -56,7 +56,7 @@ class Keluarga extends Model
     /** Kepala keluarga (seorang umat) */
     public function kepalaKeluarga(): BelongsTo
     {
-        return $this->belongsTo(Umat::class, 'kepala_keluarga_id');
+        return $this->belongsTo(Umat::class, 'kepala_keluarga_id')->withTrashed();
     }
 
     /** Semua anggota umat dalam keluarga ini */

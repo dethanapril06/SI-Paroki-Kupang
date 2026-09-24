@@ -68,9 +68,9 @@
                                     <div class="form-group">
                                         <label for="ketua_umat_id">Ketua Kategorial</label>
                                         @if ($anggota->isEmpty())
-                                            <div class="alert alert-light-warning color-warning mb-0 py-2">
-                                                <i class="bi bi-exclamation-triangle me-1"></i>
-                                                Belum ada anggota terdaftar. Tambahkan anggota terlebih dahulu untuk menetapkan ketua.
+                                            <div class="alert alert-light-danger color-danger border border-danger mb-0 py-2">
+                                                <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                                                <strong>Perhatian:</strong> Belum ada anggota terdaftar. Tambahkan anggota terlebih dahulu untuk menetapkan ketua.
                                             </div>
                                         @else
                                             <select class="form-select @error('ketua_umat_id') is-invalid @enderror"

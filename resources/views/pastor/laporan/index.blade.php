@@ -83,7 +83,7 @@
                             
                             <div class="d-grid gap-2 mt-3">
                                 <button type="button" class="btn btn-outline-primary d-flex align-items-center justify-content-center gap-2" style="border-color: #800020; color: #800020;" onclick="submitReport('sakramen', 'preview')">
-                                    <i class="bi bi-eye-fill"></i> Preview PDF
+                                    <i class="bi bi-eye-fill"></i> Pratinjau PDF
                                 </button>
                                 <button type="button" class="btn btn-primary d-flex align-items-center justify-content-center gap-2" style="background-color: #800020; border-color: #800020;" onclick="submitReport('sakramen', 'download')">
                                     <i class="bi bi-file-earmark-pdf-fill"></i> Unduh PDF
@@ -140,7 +140,7 @@
 
                             <div class="d-grid gap-2 mt-3">
                                 <button type="button" class="btn btn-outline-primary d-flex align-items-center justify-content-center gap-2" style="border-color: #800020; color: #800020;" onclick="submitReport('umat', 'preview')">
-                                    <i class="bi bi-eye-fill"></i> Preview PDF
+                                    <i class="bi bi-eye-fill"></i> Pratinjau PDF
                                 </button>
                                 <button type="button" class="btn btn-primary d-flex align-items-center justify-content-center gap-2" style="background-color: #800020; border-color: #800020;" onclick="submitReport('umat', 'download')">
                                     <i class="bi bi-file-earmark-pdf-fill"></i> Unduh PDF
@@ -179,7 +179,7 @@
                                         <label class="form-label font-bold text-sm">Status Mutasi</label>
                                         <select class="form-select" name="status">
                                             <option value="semua">Semua Status</option>
-                                            <option value="pending">Pending</option>
+                                            <option value="pending">Menunggu Persetujuan</option>
                                             <option value="disetujui">Disetujui</option>
                                             <option value="ditolak">Ditolak</option>
                                         </select>
@@ -204,7 +204,7 @@
 
                             <div class="d-grid gap-2 mt-3">
                                 <button type="button" class="btn btn-outline-primary d-flex align-items-center justify-content-center gap-2" style="border-color: #800020; color: #800020;" onclick="submitReport('mutasi', 'preview')">
-                                    <i class="bi bi-eye-fill"></i> Preview PDF
+                                    <i class="bi bi-eye-fill"></i> Pratinjau PDF
                                 </button>
                                 <button type="button" class="btn btn-primary d-flex align-items-center justify-content-center gap-2" style="background-color: #800020; border-color: #800020;" onclick="submitReport('mutasi', 'download')">
                                     <i class="bi bi-file-earmark-pdf-fill"></i> Unduh PDF

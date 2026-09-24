@@ -25,7 +25,7 @@
             <div class="row">
                 <div class="col-12 col-lg-6">
 
-                    <div class="alert alert-light-warning color-warning mb-4">
+                    <div class="alert alert-light-danger color-danger border border-danger mb-4">
                         <i class="bi bi-exclamation-triangle-fill me-2"></i>
                         <strong>Perhatian:</strong> Request ini akan dicatat dan menunggu konfirmasi dari sekretariat paroki.
                         Data Anda tidak akan langsung berubah sebelum disetujui.

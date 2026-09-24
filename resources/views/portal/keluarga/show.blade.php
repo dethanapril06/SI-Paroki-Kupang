@@ -1,6 +1,6 @@
 @extends('layouts.portal')
 
-@section('title', 'Detail Keluarga –')
+@section('title', 'Detail Keluarga')
 
 @section('content')
     <div class="page-heading">

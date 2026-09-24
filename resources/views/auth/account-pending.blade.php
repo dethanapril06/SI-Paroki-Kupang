@@ -82,11 +82,11 @@
                     Anda belum dapat masuk sebelum akun disetujui.
                 </p>
 
-                <div class="alert alert-light-warning color-warning mb-4" role="alert">
+                <div class="alert alert-light-danger color-danger border border-danger mb-4" role="alert">
                     <div class="d-flex gap-2 align-items-start">
-                        <i class="bi bi-info-circle-fill mt-1"></i>
+                        <i class="bi bi-exclamation-triangle-fill mt-1"></i>
                         <div style="font-size: 0.88rem;">
-                            Jika pendaftaran Anda sudah berlangsung lama, silakan hubungi ketua KUB Anda
+                            <strong>Perhatian:</strong> Jika pendaftaran Anda sudah berlangsung lama, silakan hubungi ketua KUB Anda
                             secara langsung untuk konfirmasi.
                         </div>
                     </div>

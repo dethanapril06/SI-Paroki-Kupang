@@ -250,6 +250,10 @@
 
                                     {{-- ===== PINDAH PAROKI ===== --}}
                                     <div class="col-12 d-none" id="wrap-paroki">
+                                        <div class="alert alert-light-danger color-danger border border-danger py-2 mb-2">
+                                            <i class="bi bi-exclamation-octagon-fill me-1"></i>
+                                            <strong>Perhatian:</strong> Mutasi Pindah Paroki akan otomatis menonaktifkan status keaktifan umat dan menghapus akun login yang terhubung.
+                                        </div>
                                         <div class="form-group">
                                             <label for="paroki_tujuan_id">Paroki Tujuan <span
                                                     class="text-danger">*</span></label>
@@ -270,6 +274,10 @@
 
                                     {{-- ===== PINDAH KEUSKUPAN ===== --}}
                                     <div class="col-12 d-none" id="wrap-keuskupan">
+                                        <div class="alert alert-light-danger color-danger border border-danger py-2 mb-2">
+                                            <i class="bi bi-exclamation-octagon-fill me-1"></i>
+                                            <strong>Perhatian:</strong> Mutasi Pindah Keuskupan akan otomatis menonaktifkan status keaktifan umat dan menghapus akun login yang terhubung.
+                                        </div>
                                         <div class="form-group">
                                             <label for="keuskupan_tujuan_id">Keuskupan Tujuan <span
                                                     class="text-danger">*</span></label>

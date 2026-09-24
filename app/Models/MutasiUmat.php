@@ -64,17 +64,17 @@ class MutasiUmat extends Model
 
     public function umat(): BelongsTo
     {
-        return $this->belongsTo(Umat::class, 'umat_id');
+        return $this->belongsTo(Umat::class, 'umat_id')->withTrashed();
     }
 
     public function keluargaAsal(): BelongsTo
     {
-        return $this->belongsTo(Keluarga::class, 'keluarga_asal_id');
+        return $this->belongsTo(Keluarga::class, 'keluarga_asal_id')->withTrashed();
     }
 
     public function keluargaTujuan(): BelongsTo
     {
-        return $this->belongsTo(Keluarga::class, 'keluarga_tujuan_id');
+        return $this->belongsTo(Keluarga::class, 'keluarga_tujuan_id')->withTrashed();
     }
 
     public function kubTujuan(): HasOneThrough

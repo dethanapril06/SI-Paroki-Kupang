@@ -33,7 +33,7 @@
                         @php
                             $statuses = [
                                 'semua' => ['label' => 'Semua Status', 'icon' => 'bi-list-ul', 'class' => 'bg-white text-secondary'],
-                                'pending' => ['label' => 'Menunggu Persetujuan (Pending)', 'icon' => 'bi-hourglass-split', 'class' => 'bg-light-warning text-warning'],
+                                'pending' => ['label' => 'Menunggu Persetujuan', 'icon' => 'bi-hourglass-split', 'class' => 'bg-light-warning text-warning'],
                                 'disetujui' => ['label' => 'Disetujui', 'icon' => 'bi-check-circle-fill', 'class' => 'bg-light-success text-success'],
                                 'ditolak' => ['label' => 'Ditolak', 'icon' => 'bi-x-circle-fill', 'class' => 'bg-light-danger text-danger'],
                             ];
@@ -104,9 +104,16 @@
                                         <td>
                                             @if ($m->jenis === 'umat' && $m->mutasiUmat)
                                                 <strong>Umat:</strong>
-                                                <a href="{{ route('pastor.umat.show', $m->mutasiUmat->umat) }}" class="fw-bold">
-                                                    {{ $m->mutasiUmat->umat->nama ?? '-' }}
-                                                </a>
+                                                @if ($m->mutasiUmat->umat && $m->mutasiUmat->umat->status_keaktifan === 'aktif' && !$m->mutasiUmat->umat->trashed())
+                                                    <a href="{{ route('pastor.umat.show', $m->mutasiUmat->umat) }}" class="fw-bold">
+                                                        {{ $m->mutasiUmat->umat->nama }}
+                                                    </a>
+                                                @else
+                                                    <span class="fw-bold">{{ $m->mutasiUmat->umat->nama ?? '-' }}</span>
+                                                    @if ($m->mutasiUmat->umat && ($m->mutasiUmat->umat->status_keaktifan !== 'aktif' || $m->mutasiUmat->umat->trashed()))
+                                                        <span class="badge bg-light-danger text-danger border border-danger small ms-1">Non-aktif / Pindah</span>
+                                                    @endif
+                                                @endif
                                                 <div class="mt-1 small">
                                                     @if ($m->mutasiUmat->nomor_surat)
                                                         <div class="text-muted"><i class="bi bi-file-earmark-text me-1"></i>No. Surat: {{ $m->mutasiUmat->nomor_surat }}</div>
@@ -129,9 +136,16 @@
                                                 </div>
                                             @elseif ($m->jenis === 'keluarga' && $m->mutasiKeluarga)
                                                 <strong>Kepala KK:</strong>
-                                                <a href="{{ route('pastor.keluarga.show', $m->mutasiKeluarga->keluarga) }}" class="fw-bold">
-                                                    {{ $m->mutasiKeluarga->keluarga->kepalaKeluarga->nama ?? '-' }}
-                                                </a>
+                                                @if ($m->mutasiKeluarga->keluarga && !$m->mutasiKeluarga->keluarga->trashed())
+                                                    <a href="{{ route('pastor.keluarga.show', $m->mutasiKeluarga->keluarga) }}" class="fw-bold">
+                                                        {{ $m->mutasiKeluarga->keluarga->kepalaKeluarga->nama ?? '-' }}
+                                                    </a>
+                                                @else
+                                                    <span class="fw-bold">{{ $m->mutasiKeluarga->keluarga->kepalaKeluarga->nama ?? '-' }}</span>
+                                                    @if ($m->mutasiKeluarga->keluarga && $m->mutasiKeluarga->keluarga->trashed())
+                                                        <span class="badge bg-light-danger text-danger border border-danger small ms-1">Pindah Paroki</span>
+                                                    @endif
+                                                @endif
                                                 <div class="mt-1 small">
                                                     @if ($m->mutasiKeluarga->nomor_surat)
                                                         <div class="text-muted"><i class="bi bi-file-earmark-text me-1"></i>No. Surat: {{ $m->mutasiKeluarga->nomor_surat }}</div>
@@ -154,14 +168,10 @@
                                                 </div>
                                             @elseif ($m->jenis === 'agama' && $m->mutasiAgama)
                                                 <strong>Umat:</strong>
-                                                <a href="{{ route('pastor.umat.show', $m->mutasiAgama->umat) }}" class="fw-bold">
-                                                    {{ $m->mutasiAgama->umat->nama ?? '-' }}
-                                                </a>
+                                                <span class="fw-bold">{{ $m->mutasiAgama->umat->nama ?? '-' }}</span>
                                                 <div class="mt-1 small">
-                                                    <span class="text-muted">Agama:</span>
-                                                    <span class="badge bg-light-danger text-danger">{{ $m->mutasiAgama->agama_asal }}</span>
-                                                    <i class="bi bi-arrow-right mx-1 text-primary"></i>
-                                                    <span class="badge bg-light-success text-success">{{ $m->mutasiAgama->agama_tujuan }}</span>
+                                                    <span class="text-muted">Agama Baru:</span>
+                                                    <span class="badge bg-light-warning text-dark">{{ $m->mutasiAgama->agama_baru }}</span>
                                                 </div>
                                             @else
                                                 <span class="text-muted">-</span>
@@ -175,9 +185,15 @@
                                                     'ditolak' => 'bg-light-danger text-danger border border-danger',
                                                     default => 'bg-light text-dark',
                                                 };
+                                                $statusLabel = match ($m->status) {
+                                                    'pending' => 'MENUNGGU',
+                                                    'disetujui' => 'DISETUJUI',
+                                                    'ditolak' => 'DITOLAK',
+                                                    default => strtoupper($m->status),
+                                                };
                                             @endphp
                                             <span class="badge {{ $statusClass }} py-2 px-3 fw-bold">
-                                                {{ strtoupper($m->status) }}
+                                                {{ $statusLabel }}
                                             </span>
                                         </td>
                                         <td>

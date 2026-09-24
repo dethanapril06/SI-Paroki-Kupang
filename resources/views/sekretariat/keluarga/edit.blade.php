@@ -115,9 +115,9 @@
                                         <div class="form-group">
                                             <label for="kepala_keluarga_id">Kepala Keluarga</label>
                                             @if ($anggota->isEmpty())
-                                                <div class="alert alert-light-warning color-warning mb-0 py-2">
-                                                    <i class="bi bi-exclamation-triangle me-1"></i>
-                                                    Belum ada anggota umat dalam keluarga ini.
+                                                <div class="alert alert-light-danger color-danger border border-danger mb-0 py-2">
+                                                    <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                                                    <strong>Perhatian:</strong> Belum ada anggota umat dalam keluarga ini.
                                                     Tambahkan anggota terlebih dahulu untuk menetapkan kepala keluarga.
                                                 </div>
                                             @else

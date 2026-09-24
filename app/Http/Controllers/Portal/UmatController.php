@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Portal;
 use App\Http\Controllers\Controller;
 use App\Models\Keluarga;
 use App\Models\Kub;
+use App\Models\Mutasi;
 use App\Models\Umat;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -43,7 +44,34 @@ class UmatController extends Controller
             $query->where('jenis_kelamin', $request->jenis_kelamin);
         }
         $umat = $query->get();
-        return view('portal.umat.index', compact('umat', 'myKub'));
+
+        $keluargaIds = Keluarga::withTrashed()->where('kub_id', $myKub->id)->pluck('id');
+        $notifMutasiDisetujui = Mutasi::where('status', 'disetujui')
+            ->where(function ($q) use ($myKub, $keluargaIds) {
+                $q->whereHas('mutasiUmat', function ($m) use ($myKub, $keluargaIds) {
+                    $m->where('kub_asal_id', $myKub->id)
+                      ->orWhereIn('keluarga_asal_id', $keluargaIds);
+                })
+                ->orWhereHas('mutasiKeluarga', function ($m) use ($myKub, $keluargaIds) {
+                    $m->where('kub_asal_id', $myKub->id)
+                      ->orWhereIn('keluarga_id', $keluargaIds);
+                });
+            })
+            ->with([
+                'mutasiUmat.umat',
+                'mutasiUmat.parokiTujuan',
+                'mutasiUmat.keuskupanTujuan',
+                'mutasiUmat.kubTujuan',
+                'mutasiKeluarga.keluarga.kepalaKeluarga',
+                'mutasiKeluarga.parokiTujuan',
+                'mutasiKeluarga.kubTujuan',
+                'diprosesOleh',
+            ])
+            ->latest('diproses_pada')
+            ->take(5)
+            ->get();
+
+        return view('portal.umat.index', compact('umat', 'myKub', 'notifMutasiDisetujui'));
     }
 
     public function show(Umat $umat)

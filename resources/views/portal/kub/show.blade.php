@@ -1,6 +1,6 @@
 @extends('layouts.portal')
 
-@section('title', 'Profil KUB –')
+@section('title', 'Profil KUB')
 
 @section('content')
     <div class="page-heading">

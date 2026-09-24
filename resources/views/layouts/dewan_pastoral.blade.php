@@ -190,7 +190,7 @@
                                             @csrf
                                             <button type="submit" class="dropdown-item text-danger">
                                                 <i class="icon-mid bi bi-box-arrow-left me-2"></i>
-                                                Logout
+                                                Keluar
                                             </button>
                                         </form>
                                     </li>

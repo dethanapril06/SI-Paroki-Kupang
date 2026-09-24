@@ -57,7 +57,7 @@
                 {{-- Filter Tabs --}}
                 <div class="card-body pb-0 border-bottom">
                     <ul class="nav nav-tabs" id="statusTab">
-                        @foreach (['semua' => 'Semua', 'pending' => 'Pending', 'disetujui' => 'Disetujui', 'ditolak' => 'Ditolak'] as $key => $label)
+                        @foreach (['semua' => 'Semua', 'pending' => 'Menunggu', 'disetujui' => 'Disetujui', 'ditolak' => 'Ditolak'] as $key => $label)
                             <li class="nav-item">
                                 <a class="nav-link {{ $status === $key ? 'active' : '' }}"
                                     href="{{ route('sekretariat.mutasi.index', ['status' => $key]) }}">
@@ -86,7 +86,7 @@
                     @endif
 
                     <div class="table-responsive">
-                        <table class="table table-hover align-middle" id="table1">
+                        <table class="table table-hover table-striped" id="table-mutasi">
                             <thead>
                                 <tr>
                                     <th>No</th>
@@ -117,8 +117,14 @@
                                                 {{ $item->mutasiAgama->umat->nama ?? '-' }}
                                             @elseif ($item->jenis === 'keluarga' && $item->mutasiKeluarga)
                                                 {{ $item->mutasiKeluarga->keluarga->kepalaKeluarga->nama ?? '-' }}
+                                                @if ($item->mutasiKeluarga->keluarga && $item->mutasiKeluarga->keluarga->trashed())
+                                                    <span class="badge bg-light-danger text-danger border border-danger small ms-1">Pindah Paroki</span>
+                                                @endif
                                             @elseif ($item->jenis === 'umat' && $item->mutasiUmat)
                                                 {{ $item->mutasiUmat->umat->nama ?? '-' }}
+                                                @if ($item->mutasiUmat->umat && ($item->mutasiUmat->umat->trashed() || $item->mutasiUmat->umat->status_keaktifan !== 'aktif'))
+                                                    <span class="badge bg-light-danger text-danger border border-danger small ms-1">Non-aktif / Pindah</span>
+                                                @endif
                                             @else
                                                 -
                                             @endif
@@ -141,7 +147,7 @@
                                         <td>
                                             @if ($item->isPending())
                                                 <span class="badge bg-warning text-dark">
-                                                    <i class="bi bi-hourglass-split me-1"></i>Pending
+                                                    <i class="bi bi-hourglass-split me-1"></i>Menunggu
                                                 </span>
                                             @elseif ($item->isDisetujui())
                                                 <span class="badge bg-success">

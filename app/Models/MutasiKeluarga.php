@@ -61,7 +61,7 @@ class MutasiKeluarga extends Model
 
     public function keluarga(): BelongsTo
     {
-        return $this->belongsTo(Keluarga::class, 'keluarga_id');
+        return $this->belongsTo(Keluarga::class, 'keluarga_id')->withTrashed();
     }
 
     public function kubAsal(): BelongsTo

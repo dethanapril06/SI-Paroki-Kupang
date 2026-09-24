@@ -70,7 +70,7 @@ class Mutasi extends Model
     /** Umat yang mengajukan request (null = dibuat langsung oleh sekretariat) */
     public function pemohon(): BelongsTo
     {
-        return $this->belongsTo(Umat::class, 'pemohon_umat_id');
+        return $this->belongsTo(Umat::class, 'pemohon_umat_id')->withTrashed();
     }
 
     /** User (sekretariat) yang memproses (approve/reject) */

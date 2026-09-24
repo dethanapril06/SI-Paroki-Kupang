@@ -134,9 +134,9 @@
                                         </tr>
                                     </table>
                                 @else
-                                    <div class="alert alert-light-warning color-warning" role="alert">
+                                    <div class="alert alert-light-danger color-danger border border-danger" role="alert">
                                         <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                                        Akun login untuk Ketua ini belum tersedia.
+                                        <strong>Perhatian:</strong> Akun login untuk Ketua ini belum tersedia.
                                     </div>
                                 @endif
                             @else

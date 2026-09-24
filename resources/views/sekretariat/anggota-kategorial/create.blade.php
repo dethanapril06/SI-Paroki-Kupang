@@ -59,9 +59,9 @@
                                     <div class="form-group">
                                         <label for="umat_id">Umat <span class="text-danger">*</span></label>
                                         @if ($umat->isEmpty())
-                                            <div class="alert alert-light-warning color-warning py-2 mb-0">
-                                                <i class="bi bi-exclamation-triangle me-1"></i>
-                                                Semua umat sudah terdaftar sebagai anggota kategorial ini.
+                                            <div class="alert alert-light-danger color-danger border border-danger py-2 mb-0">
+                                                <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                                                <strong>Perhatian:</strong> Semua umat sudah terdaftar sebagai anggota kategorial ini.
                                             </div>
                                         @else
                                             <select class="form-select @error('umat_id') is-invalid @enderror"
