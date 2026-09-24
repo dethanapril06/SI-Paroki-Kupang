@@ -139,13 +139,21 @@ class MutasiRequestController extends Controller
             'tanggal'                    => ['required', 'date'],
             'nomor_surat'                => ['nullable', 'string', 'max:100'],
             'keterangan'                 => ['nullable', 'string', 'max:1000'],
-            'keluarga_tujuan_id'         => ['nullable', 'exists:keluarga,id'],
+            'keluarga_tujuan_id'         => ['required_if:sub_jenis,pindah_keluarga_ada', 'nullable', 'exists:keluarga,id'],
             'alamat_baru'                => ['nullable', 'string'],
             'status_tempat_tinggal_baru' => ['nullable', 'in:Rumah Pribadi,Kontrak/Kost,Dinas'],
             'jadikan_kepala'             => ['nullable', 'boolean'],
             'hubungan_keluarga_baru'     => ['nullable', 'in:Suami,Istri,Ayah,Ibu'],
-            'paroki_tujuan_id'           => ['nullable', 'exists:paroki,id'],
-            'keuskupan_tujuan_id'        => ['nullable', 'exists:keuskupan,id'],
+            'paroki_tujuan_id'           => ['required_if:sub_jenis,paroki', 'nullable', 'exists:paroki,id'],
+            'keuskupan_tujuan_id'        => ['required_if:sub_jenis,keuskupan', 'nullable', 'exists:keuskupan,id'],
+        ], [
+            'sub_jenis.required'              => 'Jenis perpindahan wajib dipilih.',
+            'sub_jenis.in'                    => 'Jenis perpindahan yang dipilih tidak valid.',
+            'tanggal.required'                => 'Tanggal perpindahan wajib diisi.',
+            'tanggal.date'                    => 'Tanggal perpindahan harus berupa tanggal yang valid.',
+            'keluarga_tujuan_id.required_if'  => 'Keluarga tujuan wajib dipilih.',
+            'paroki_tujuan_id.required_if'    => 'Paroki tujuan wajib dipilih jika pindah ke paroki lain.',
+            'keuskupan_tujuan_id.required_if' => 'Keuskupan tujuan wajib dipilih jika pindah ke luar keuskupan.',
         ]);
 
         // Ambil data hierarki asal
@@ -236,9 +244,16 @@ class MutasiRequestController extends Controller
             'sub_jenis'           => ['required', 'in:keuskupan,paroki,wilayah,kub'],
             'tanggal'             => ['required', 'date'],
             'nomor_surat'         => ['nullable', 'string', 'max:100'],
-            'paroki_tujuan_id'    => ['nullable', 'exists:paroki,id'],
-            'keuskupan_tujuan_id' => ['nullable', 'exists:keuskupan,id'],
+            'paroki_tujuan_id'    => ['required_if:sub_jenis,paroki', 'nullable', 'exists:paroki,id'],
+            'keuskupan_tujuan_id' => ['required_if:sub_jenis,keuskupan', 'nullable', 'exists:keuskupan,id'],
             'keterangan'          => ['nullable', 'string', 'max:1000'],
+        ], [
+            'sub_jenis.required'              => 'Jenis perpindahan wajib dipilih.',
+            'sub_jenis.in'                    => 'Jenis perpindahan yang dipilih tidak valid.',
+            'tanggal.required'                => 'Tanggal perpindahan wajib diisi.',
+            'tanggal.date'                    => 'Tanggal perpindahan harus berupa tanggal yang valid.',
+            'paroki_tujuan_id.required_if'    => 'Paroki tujuan wajib dipilih jika pindah ke paroki lain.',
+            'keuskupan_tujuan_id.required_if' => 'Keuskupan tujuan wajib dipilih jika pindah ke luar keuskupan.',
         ]);
 
         $kub     = $keluarga->kub;
@@ -292,6 +307,11 @@ class MutasiRequestController extends Controller
             'agama_tujuan' => ['required', 'in:protestan,hindu,budha,khonghucu,islam'],
             'tanggal'      => ['required', 'date'],
             'keterangan'   => ['nullable', 'string', 'max:1000'],
+        ], [
+            'agama_tujuan.required' => 'Agama tujuan wajib dipilih.',
+            'agama_tujuan.in'       => 'Agama tujuan yang dipilih tidak valid.',
+            'tanggal.required'      => 'Tanggal mutasi wajib diisi.',
+            'tanggal.date'          => 'Tanggal mutasi harus berupa tanggal yang valid.',
         ]);
 
         // Simpan record mutasi dengan status pending — umat TIDAK langsung di-soft delete
@@ -353,11 +373,21 @@ class MutasiRequestController extends Controller
             'tanggal'                    => ['required', 'date'],
             'nomor_surat'                => ['nullable', 'string', 'max:100'],
             'keterangan'                 => ['nullable', 'string', 'max:1000'],
-            'keluarga_tujuan_id'         => ['nullable', 'exists:keluarga,id'],
+            'keluarga_tujuan_id'         => ['required_if:sub_jenis,pindah_keluarga_ada', 'nullable', 'exists:keluarga,id'],
             'alamat_baru'                => ['nullable', 'string'],
             'status_tempat_tinggal_baru' => ['nullable', 'in:Rumah Pribadi,Kontrak/Kost,Dinas'],
-            'paroki_tujuan_id'           => ['nullable', 'exists:paroki,id'],
-            'keuskupan_tujuan_id'        => ['nullable', 'exists:keuskupan,id'],
+            'paroki_tujuan_id'           => ['required_if:sub_jenis,paroki', 'nullable', 'exists:paroki,id'],
+            'keuskupan_tujuan_id'        => ['required_if:sub_jenis,keuskupan', 'nullable', 'exists:keuskupan,id'],
+        ], [
+            'umat_id.required'                => 'Umat wajib dipilih.',
+            'umat_id.exists'                  => 'Umat yang dipilih tidak valid.',
+            'sub_jenis.required'              => 'Jenis perpindahan wajib dipilih.',
+            'sub_jenis.in'                    => 'Jenis perpindahan yang dipilih tidak valid.',
+            'tanggal.required'                => 'Tanggal perpindahan wajib diisi.',
+            'tanggal.date'                    => 'Tanggal perpindahan harus berupa tanggal yang valid.',
+            'keluarga_tujuan_id.required_if'  => 'Keluarga tujuan wajib dipilih.',
+            'paroki_tujuan_id.required_if'    => 'Paroki tujuan wajib dipilih jika pindah ke paroki lain.',
+            'keuskupan_tujuan_id.required_if' => 'Keuskupan tujuan wajib dipilih jika pindah ke luar keuskupan.',
         ]);
 
         // Pastikan umat yang dipilih benar-benar berada dalam KUB ketua ini

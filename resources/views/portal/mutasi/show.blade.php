@@ -116,14 +116,30 @@
                                 <table class="table table-borderless mb-0">
                                     <tr><td class="fw-semibold text-muted" style="width:40%">Umat</td>
                                         <td>{{ $detail->umat->nama ?? '-' }}</td></tr>
-                                    <tr><td class="fw-semibold text-muted">Sub Jenis</td>
-                                        <td>{{ str_replace('_', ' ', $detail->sub_jenis) }}</td></tr>
+                                    <tr><td class="fw-semibold text-muted">Jenis Pindah</td>
+                                        <td>
+                                            @if ($detail->sub_jenis === 'pindah_keluarga_ada')
+                                                <span class="badge bg-info">Pindah ke Keluarga yang Ada</span>
+                                            @elseif ($detail->sub_jenis === 'pindah_keluarga_baru')
+                                                <span class="badge bg-primary">Pindah / Bentuk Keluarga Baru</span>
+                                            @elseif ($detail->sub_jenis === 'paroki')
+                                                <span class="badge bg-warning text-dark">Pindah Paroki</span>
+                                            @elseif ($detail->sub_jenis === 'keuskupan')
+                                                <span class="badge bg-danger">Pindah Luar Keuskupan</span>
+                                            @else
+                                                <span class="badge bg-secondary">{{ ucwords(str_replace('_', ' ', $detail->sub_jenis)) }}</span>
+                                            @endif
+                                        </td></tr>
                                     @if ($detail->nomor_surat)
                                         <tr><td class="fw-semibold text-muted">Nomor Surat</td>
                                             <td>{{ $detail->nomor_surat }}</td></tr>
                                     @endif
                                     <tr><td class="fw-semibold text-muted">Keluarga Asal</td>
-                                        <td>{{ $detail->keluargaAsal?->kepalaKeluarga?->nama ?? '-' }}</td></tr>
+                                        <td>{{ $detail->keluargaAsal?->nama ?? $detail->keluargaAsal?->kepalaKeluarga?->nama ?? '-' }}</td></tr>
+                                    @if ($detail->keluargaTujuan)
+                                        <tr><td class="fw-semibold text-muted">Keluarga Tujuan</td>
+                                            <td>{{ $detail->keluargaTujuan->nama ?? $detail->keluargaTujuan->kepalaKeluarga?->nama ?? '-' }}</td></tr>
+                                    @endif
                                     @if ($detail->parokiTujuan)
                                         <tr><td class="fw-semibold text-muted">Paroki Tujuan</td>
                                             <td>{{ $detail->parokiTujuan->nama }}</td></tr>
@@ -143,9 +159,21 @@
                             <div class="card-body">
                                 <table class="table table-borderless mb-0">
                                     <tr><td class="fw-semibold text-muted" style="width:40%">Keluarga</td>
-                                        <td>{{ $detail->keluarga?->kepalaKeluarga?->nama ?? '-' }}</td></tr>
-                                    <tr><td class="fw-semibold text-muted">Sub Jenis</td>
-                                        <td>{{ ucfirst($detail->sub_jenis) }}</td></tr>
+                                        <td>{{ $detail->keluarga?->nama ?? $detail->keluarga?->kepalaKeluarga?->nama ?? '-' }}</td></tr>
+                                    <tr><td class="fw-semibold text-muted">Jenis Pindah</td>
+                                        <td>
+                                            @if ($detail->sub_jenis === 'kub')
+                                                <span class="badge bg-info">Pindah KUB</span>
+                                            @elseif ($detail->sub_jenis === 'wilayah')
+                                                <span class="badge bg-primary">Pindah Wilayah</span>
+                                            @elseif ($detail->sub_jenis === 'paroki')
+                                                <span class="badge bg-warning text-dark">Pindah Paroki</span>
+                                            @elseif ($detail->sub_jenis === 'keuskupan')
+                                                <span class="badge bg-danger">Pindah Luar Keuskupan</span>
+                                            @else
+                                                <span class="badge bg-secondary">{{ ucwords(str_replace('_', ' ', $detail->sub_jenis)) }}</span>
+                                            @endif
+                                        </td></tr>
                                     @if ($detail->nomor_surat)
                                         <tr><td class="fw-semibold text-muted">Nomor Surat</td>
                                             <td>{{ $detail->nomor_surat }}</td></tr>
@@ -154,6 +182,10 @@
                                         <td>{{ $detail->kubAsal?->nama ?? '-' }}</td></tr>
                                     <tr><td class="fw-semibold text-muted">Wilayah Asal</td>
                                         <td>{{ $detail->wilayahAsal?->nama ?? '-' }}</td></tr>
+                                    @if ($detail->kubTujuan)
+                                        <tr><td class="fw-semibold text-muted">KUB Tujuan</td>
+                                            <td>{{ $detail->kubTujuan->nama }}</td></tr>
+                                    @endif
                                     @if ($detail->parokiTujuan)
                                         <tr><td class="fw-semibold text-muted">Paroki Tujuan</td>
                                             <td>{{ $detail->parokiTujuan->nama }}</td></tr>

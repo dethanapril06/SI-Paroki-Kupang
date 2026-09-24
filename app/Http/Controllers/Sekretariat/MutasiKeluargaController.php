@@ -150,11 +150,21 @@ class MutasiKeluargaController extends Controller
             'sub_jenis'           => ['required', 'in:keuskupan,paroki,wilayah,kub'],
             'tanggal'             => ['required', 'date'],
             'nomor_surat'         => ['nullable', 'string', 'max:100'],
-            'kub_tujuan_id'       => ['nullable', 'exists:kub,id'],
+            'kub_tujuan_id'       => ['required_if:sub_jenis,kub,wilayah', 'nullable', 'exists:kub,id'],
             'wilayah_tujuan_id'   => ['nullable', 'exists:wilayah,id'],
-            'paroki_tujuan_id'    => ['nullable', 'exists:paroki,id'],
-            'keuskupan_tujuan_id' => ['nullable', 'exists:keuskupan,id'],
+            'paroki_tujuan_id'    => ['required_if:sub_jenis,paroki', 'nullable', 'exists:paroki,id'],
+            'keuskupan_tujuan_id' => ['required_if:sub_jenis,keuskupan', 'nullable', 'exists:keuskupan,id'],
             'keterangan'          => ['nullable', 'string'],
+        ], [
+            'keluarga_id.required'         => 'Keluarga wajib dipilih.',
+            'keluarga_id.exists'           => 'Keluarga yang dipilih tidak valid.',
+            'sub_jenis.required'           => 'Jenis pindah wajib dipilih.',
+            'sub_jenis.in'                 => 'Jenis pindah yang dipilih tidak valid.',
+            'tanggal.required'             => 'Tanggal mutasi wajib diisi.',
+            'tanggal.date'                 => 'Tanggal mutasi harus berupa tanggal yang valid.',
+            'kub_tujuan_id.required_if'    => 'KUB tujuan wajib dipilih untuk jenis pindah ini.',
+            'paroki_tujuan_id.required_if' => 'Paroki tujuan wajib dipilih jika pindah paroki.',
+            'keuskupan_tujuan_id.required_if' => 'Keuskupan tujuan wajib dipilih jika pindah keuskupan.',
         ]);
 
         $keluarga = Keluarga::with([
@@ -285,11 +295,21 @@ class MutasiKeluargaController extends Controller
             'sub_jenis'           => ['required', 'in:keuskupan,paroki,wilayah,kub'],
             'tanggal'             => ['required', 'date'],
             'nomor_surat'         => ['nullable', 'string', 'max:100'],
-            'kub_tujuan_id'       => ['nullable', 'exists:kub,id'],
+            'kub_tujuan_id'       => ['required_if:sub_jenis,kub,wilayah', 'nullable', 'exists:kub,id'],
             'wilayah_tujuan_id'   => ['nullable', 'exists:wilayah,id'],
-            'paroki_tujuan_id'    => ['nullable', 'exists:paroki,id'],
-            'keuskupan_tujuan_id' => ['nullable', 'exists:keuskupan,id'],
+            'paroki_tujuan_id'    => ['required_if:sub_jenis,paroki', 'nullable', 'exists:paroki,id'],
+            'keuskupan_tujuan_id' => ['required_if:sub_jenis,keuskupan', 'nullable', 'exists:keuskupan,id'],
             'keterangan'          => ['nullable', 'string'],
+        ], [
+            'keluarga_id.required'         => 'Keluarga wajib dipilih.',
+            'keluarga_id.exists'           => 'Keluarga yang dipilih tidak valid.',
+            'sub_jenis.required'           => 'Jenis pindah wajib dipilih.',
+            'sub_jenis.in'                 => 'Jenis pindah yang dipilih tidak valid.',
+            'tanggal.required'             => 'Tanggal mutasi wajib diisi.',
+            'tanggal.date'                 => 'Tanggal mutasi harus berupa tanggal yang valid.',
+            'kub_tujuan_id.required_if'    => 'KUB tujuan wajib dipilih untuk jenis pindah ini.',
+            'paroki_tujuan_id.required_if' => 'Paroki tujuan wajib dipilih jika pindah paroki.',
+            'keuskupan_tujuan_id.required_if' => 'Keuskupan tujuan wajib dipilih jika pindah keuskupan.',
         ]);
 
         $mutasiKeluarga->mutasi->update([

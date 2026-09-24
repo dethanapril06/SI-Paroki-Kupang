@@ -69,23 +69,25 @@
                                 </div>
 
                                 <div id="section-paroki" class="d-none mb-3">
-                                    <label class="form-label fw-semibold">Paroki Tujuan</label>
-                                    <select name="paroki_tujuan_id" class="form-select">
+                                    <label class="form-label fw-semibold">Paroki Tujuan <span class="text-danger">*</span></label>
+                                    <select name="paroki_tujuan_id" class="form-select @error('paroki_tujuan_id') is-invalid @enderror">
                                         <option value="">-- Pilih Paroki --</option>
                                         @foreach ($parokiList as $p)
                                             <option value="{{ $p->id }}" {{ old('paroki_tujuan_id') == $p->id ? 'selected' : '' }}>{{ $p->nama }}</option>
                                         @endforeach
                                     </select>
+                                    @error('paroki_tujuan_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
                                 </div>
 
                                 <div id="section-keuskupan" class="d-none mb-3">
-                                    <label class="form-label fw-semibold">Keuskupan Tujuan</label>
-                                    <select name="keuskupan_tujuan_id" class="form-select">
+                                    <label class="form-label fw-semibold">Keuskupan Tujuan <span class="text-danger">*</span></label>
+                                    <select name="keuskupan_tujuan_id" class="form-select @error('keuskupan_tujuan_id') is-invalid @enderror">
                                         <option value="">-- Pilih Keuskupan --</option>
                                         @foreach ($keuskupanList as $k)
                                             <option value="{{ $k->id }}" {{ old('keuskupan_tujuan_id') == $k->id ? 'selected' : '' }}>{{ $k->nama }}</option>
                                         @endforeach
                                     </select>
+                                    @error('keuskupan_tujuan_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
                                 </div>
 
                                 <div id="section-kub-wilayah-info" class="alert alert-light-info color-info d-none mb-3">

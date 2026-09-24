@@ -136,17 +136,29 @@ class MutasiUmatController extends Controller
             'keterangan'           => ['nullable', 'string'],
 
             // Pindah keluarga yang sudah ada
-            'keluarga_tujuan_id'   => ['nullable', 'exists:keluarga,id'],
+            'keluarga_tujuan_id'   => ['required_if:sub_jenis,pindah_keluarga_ada', 'nullable', 'exists:keluarga,id'],
 
             // Pindah keluarga baru
-            'alamat_baru'          => ['required', 'string'],
-            'status_tempat_tinggal_baru' => ['required', 'in:Rumah Pribadi,Kontrak/Kost,Dinas'],
+            'alamat_baru'          => ['required_if:sub_jenis,pindah_keluarga_baru', 'nullable', 'string'],
+            'status_tempat_tinggal_baru' => ['required_if:sub_jenis,pindah_keluarga_baru', 'nullable', 'in:Rumah Pribadi,Kontrak/Kost,Dinas'],
             'jadikan_kepala'       => ['nullable', 'boolean'],
             'hubungan_keluarga_baru' => ['nullable', 'in:Suami,Istri,Ayah,Ibu'],
 
             // Pindah paroki/keuskupan
-            'paroki_tujuan_id'     => ['nullable', 'exists:paroki,id'],
-            'keuskupan_tujuan_id'  => ['nullable', 'exists:keuskupan,id'],
+            'paroki_tujuan_id'     => ['required_if:sub_jenis,paroki', 'nullable', 'exists:paroki,id'],
+            'keuskupan_tujuan_id'  => ['required_if:sub_jenis,keuskupan', 'nullable', 'exists:keuskupan,id'],
+        ], [
+            'umat_id.required'                    => 'Umat wajib dipilih.',
+            'umat_id.exists'                      => 'Umat yang dipilih tidak valid.',
+            'sub_jenis.required'                  => 'Jenis mutasi wajib dipilih.',
+            'sub_jenis.in'                        => 'Jenis mutasi yang dipilih tidak valid.',
+            'tanggal.required'                    => 'Tanggal mutasi wajib diisi.',
+            'tanggal.date'                        => 'Tanggal mutasi harus berupa tanggal yang valid.',
+            'keluarga_tujuan_id.required_if'      => 'Keluarga tujuan wajib dipilih.',
+            'alamat_baru.required_if'             => 'Alamat baru wajib diisi untuk keluarga baru.',
+            'status_tempat_tinggal_baru.required_if' => 'Status tempat tinggal baru wajib dipilih untuk keluarga baru.',
+            'paroki_tujuan_id.required_if'        => 'Paroki tujuan wajib dipilih jika pindah paroki.',
+            'keuskupan_tujuan_id.required_if'     => 'Keuskupan tujuan wajib dipilih jika pindah ke luar keuskupan.',
         ]);
 
         $umat = Umat::aktif()->with([

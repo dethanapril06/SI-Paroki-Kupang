@@ -74,6 +74,9 @@ class MutasiController extends Controller
     {
         $request->validate([
             'catatan_admin' => ['required', 'string', 'max:500'],
+        ], [
+            'catatan_admin.required' => 'Alasan penolakan (catatan admin) wajib diisi.',
+            'catatan_admin.max'      => 'Alasan penolakan maksimal 500 karakter.',
         ]);
 
         if (!$mutasi->isPending()) {
