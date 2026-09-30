@@ -18,9 +18,9 @@ class RegisteredUserController extends Controller
     /**
      * Display the registration view.
      */
-    public function create(): View
+    public function create(): RedirectResponse
     {
-        return view('auth.register');
+        return redirect()->route('umat.register');
     }
 
     /**
@@ -34,6 +34,15 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ], [
+            'name.required'     => 'Nama lengkap wajib diisi.',
+            'name.max'          => 'Nama lengkap maksimal 255 karakter.',
+            'email.required'    => 'Alamat email wajib diisi.',
+            'email.email'       => 'Format alamat email tidak valid.',
+            'email.max'         => 'Alamat email maksimal 255 karakter.',
+            'email.unique'      => 'Alamat email ini sudah terdaftar.',
+            'password.required' => 'Kata sandi wajib diisi.',
+            'password.confirmed'=> 'Konfirmasi kata sandi tidak cocok.',
         ]);
 
         $user = User::create([

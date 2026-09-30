@@ -1,5 +1,7 @@
 @extends('layouts.guest')
 
+@section('title', 'Masuk - Sistem Informasi Paroki')
+
 @section('content')
     <style>
         :root {
@@ -83,7 +85,7 @@
                     </div>
                 @endif
 
-                <form method="POST" action="{{ route('login') }}">
+                <form method="POST" action="{{ route('login') }}" id="loginForm" novalidate>
                     @csrf
                     <div class="form-group position-relative has-icon-left mb-4">
                         <input type="email" name="email" id="email"
@@ -92,9 +94,9 @@
                         <div class="form-control-icon">
                             <i class="bi bi-envelope"></i>
                         </div>
-                        @error('email')
-                            <div class="invalid-feedback d-block">{{ $message }}</div>
-                        @enderror
+                        <div class="invalid-feedback @error('email') d-block @enderror" id="email-error">
+                            {{ $errors->first('email') }}
+                        </div>
                     </div>
                     <div class="form-group position-relative has-icon-left mb-4">
                         <input type="password" name="password" id="password"
@@ -103,9 +105,9 @@
                         <div class="form-control-icon">
                             <i class="bi bi-shield-lock"></i>
                         </div>
-                        @error('password')
-                            <div class="invalid-feedback d-block">{{ $message }}</div>
-                        @enderror
+                        <div class="invalid-feedback @error('password') d-block @enderror" id="password-error">
+                            {{ $errors->first('password') }}
+                        </div>
                     </div>
                     <div class="form-check form-check-lg d-flex align-items-end mb-4">
                         <input class="form-check-input me-2" type="checkbox" name="remember" id="remember"
@@ -126,4 +128,69 @@
             <div id="auth-right"></div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('loginForm');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const emailError = document.getElementById('email-error');
+            const passwordError = document.getElementById('password-error');
+
+            function clearFieldError(input, errorEl) {
+                input.classList.remove('is-invalid');
+                errorEl.classList.remove('d-block');
+                errorEl.textContent = '';
+            }
+
+            function showFieldError(input, errorEl, message) {
+                input.classList.add('is-invalid');
+                errorEl.classList.add('d-block');
+                errorEl.textContent = message;
+            }
+
+            emailInput.addEventListener('input', function () {
+                clearFieldError(emailInput, emailError);
+            });
+
+            passwordInput.addEventListener('input', function () {
+                clearFieldError(passwordInput, passwordError);
+            });
+
+            form.addEventListener('submit', function (e) {
+                let isValid = true;
+                let firstInvalid = null;
+
+                const emailVal = emailInput.value.trim();
+                const passwordVal = passwordInput.value;
+
+                if (!emailVal) {
+                    showFieldError(emailInput, emailError, 'Alamat email wajib diisi.');
+                    isValid = false;
+                    if (!firstInvalid) firstInvalid = emailInput;
+                } else {
+                    // Cek format email sederhana
+                    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailPattern.test(emailVal)) {
+                        showFieldError(emailInput, emailError, 'Format alamat email tidak valid (contoh: nama@email.com).');
+                        isValid = false;
+                        if (!firstInvalid) firstInvalid = emailInput;
+                    }
+                }
+
+                if (!passwordVal) {
+                    showFieldError(passwordInput, passwordError, 'Kata sandi wajib diisi.');
+                    isValid = false;
+                    if (!firstInvalid) firstInvalid = passwordInput;
+                }
+
+                if (!isValid) {
+                    e.preventDefault();
+                    if (firstInvalid) {
+                        firstInvalid.focus();
+                    }
+                }
+            });
+        });
+    </script>
 @endsection

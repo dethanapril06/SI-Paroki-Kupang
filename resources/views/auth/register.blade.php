@@ -1,5 +1,7 @@
 @extends('layouts.guest')
 
+@section('title', 'Pendaftaran Akun Umat - Sistem Informasi Paroki')
+
 @section('content')
     <style>
         :root {
@@ -288,9 +290,9 @@
                                         </option>
                                     @endforeach
                                 </select>
-                                @error('kub_id')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <div class="invalid-feedback @error('kub_id') d-block @enderror" id="kub_id-error">
+                                    {{ $errors->first('kub_id') }}
+                                </div>
                             </div>
 
                             {{-- Alamat --}}
@@ -299,9 +301,9 @@
                                 <textarea name="alamat" id="alamat" rows="2"
                                     class="form-control @error('alamat') is-invalid @enderror"
                                     placeholder="Jl. Flores No. 12, RT 03/RW 01">{{ old('alamat') }}</textarea>
-                                @error('alamat')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <div class="invalid-feedback @error('alamat') d-block @enderror" id="alamat-error">
+                                    {{ $errors->first('alamat') }}
+                                </div>
                             </div>
 
                             {{-- Status Tempat Tinggal --}}
@@ -317,9 +319,9 @@
                                             {{ old('status_tempat_tinggal') == $s ? 'selected' : '' }}>{{ $s }}</option>
                                     @endforeach
                                 </select>
-                                @error('status_tempat_tinggal')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <div class="invalid-feedback @error('status_tempat_tinggal') d-block @enderror" id="status_tempat_tinggal-error">
+                                    {{ $errors->first('status_tempat_tinggal') }}
+                                </div>
                             </div>
 
                             {{-- Kepala Keluarga --}}
@@ -359,9 +361,9 @@
                                         </option>
                                     @endforeach
                                 </select>
-                                @error('keluarga_id')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <div class="invalid-feedback @error('keluarga_id') d-block @enderror" id="keluarga_id-error">
+                                    {{ $errors->first('keluarga_id') }}
+                                </div>
                                 <div class="form-text">
                                     <i class="bi bi-info-circle me-1"></i>
                                     Pilih sesuai nama kepala keluarga atau alamat.
@@ -392,7 +394,7 @@
                                 <input type="text" name="nama" id="nama"
                                     class="form-control @error('nama') is-invalid @enderror"
                                     value="{{ old('nama') }}" placeholder="Nama sesuai KTP" required>
-                                @error('nama') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                <div class="invalid-feedback @error('nama') d-block @enderror" id="nama-error">{{ $errors->first('nama') }}</div>
                             </div>
 
                             <div class="col-7 mb-2">
@@ -400,7 +402,7 @@
                                 <input type="text" name="tempat_lahir" id="tempat_lahir"
                                     class="form-control @error('tempat_lahir') is-invalid @enderror"
                                     value="{{ old('tempat_lahir') }}" placeholder="Kupang" required>
-                                @error('tempat_lahir') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                <div class="invalid-feedback @error('tempat_lahir') d-block @enderror" id="tempat_lahir-error">{{ $errors->first('tempat_lahir') }}</div>
                             </div>
 
                             <div class="col-5 mb-2">
@@ -408,7 +410,7 @@
                                 <input type="date" name="tanggal_lahir" id="tanggal_lahir"
                                     class="form-control @error('tanggal_lahir') is-invalid @enderror"
                                     value="{{ old('tanggal_lahir') }}" required>
-                                @error('tanggal_lahir') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                <div class="invalid-feedback @error('tanggal_lahir') d-block @enderror" id="tanggal_lahir-error">{{ $errors->first('tanggal_lahir') }}</div>
                             </div>
 
                             <div class="col-6 mb-2">
@@ -419,7 +421,7 @@
                                     <option value="Laki-laki" {{ old('jenis_kelamin') == 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
                                     <option value="Perempuan" {{ old('jenis_kelamin') == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
                                 </select>
-                                @error('jenis_kelamin') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                <div class="invalid-feedback @error('jenis_kelamin') d-block @enderror" id="jenis_kelamin-error">{{ $errors->first('jenis_kelamin') }}</div>
                             </div>
 
                             <div class="col-6 mb-2">
@@ -431,7 +433,7 @@
                                         <option value="{{ $hub }}" {{ old('hubungan_keluarga') == $hub ? 'selected' : '' }}>{{ $hub }}</option>
                                     @endforeach
                                 </select>
-                                @error('hubungan_keluarga') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                <div class="invalid-feedback @error('hubungan_keluarga') d-block @enderror" id="hubungan_keluarga-error">{{ $errors->first('hubungan_keluarga') }}</div>
                             </div>
 
                             <div class="col-6 mb-2">
@@ -443,7 +445,7 @@
                                         <option value="{{ $sp }}" {{ old('status_pernikahan') == $sp ? 'selected' : '' }}>{{ $sp }}</option>
                                     @endforeach
                                 </select>
-                                @error('status_pernikahan') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                <div class="invalid-feedback @error('status_pernikahan') d-block @enderror" id="status_pernikahan-error">{{ $errors->first('status_pernikahan') }}</div>
                             </div>
 
                             <div class="col-6 mb-2">
@@ -451,7 +453,7 @@
                                 <input type="tel" name="no_telepon" id="no_telepon"
                                     class="form-control @error('no_telepon') is-invalid @enderror"
                                     value="{{ old('no_telepon') }}" placeholder="08xx-xxxx-xxxx" required>
-                                @error('no_telepon') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                <div class="invalid-feedback @error('no_telepon') d-block @enderror" id="no_telepon-error">{{ $errors->first('no_telepon') }}</div>
                             </div>
 
                             <div class="col-6 mb-2">
@@ -463,7 +465,7 @@
                                         <option value="{{ $p }}" {{ old('pendidikan') == $p ? 'selected' : '' }}>{{ $p }}</option>
                                     @endforeach
                                 </select>
-                                @error('pendidikan') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                <div class="invalid-feedback @error('pendidikan') d-block @enderror" id="pendidikan-error">{{ $errors->first('pendidikan') }}</div>
                             </div>
 
                             <div class="col-6 mb-2">
@@ -471,7 +473,7 @@
                                 <input type="text" name="pekerjaan" id="pekerjaan"
                                     class="form-control @error('pekerjaan') is-invalid @enderror"
                                     value="{{ old('pekerjaan') }}" placeholder="PNS, Wiraswasta, dll." required>
-                                @error('pekerjaan') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                <div class="invalid-feedback @error('pekerjaan') d-block @enderror" id="pekerjaan-error">{{ $errors->first('pekerjaan') }}</div>
                             </div>
                         </div>
 
@@ -496,7 +498,9 @@
                                 class="form-control form-control-xl @error('email') is-invalid @enderror"
                                 placeholder="Alamat Email" value="{{ old('email') }}" required autocomplete="email">
                             <div class="form-control-icon"><i class="bi bi-envelope"></i></div>
-                            @error('email') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
+                            <div class="invalid-feedback @error('email') d-block @enderror" id="email-error">
+                                {{ $errors->first('email') }}
+                            </div>
                         </div>
 
                         <div class="form-group position-relative has-icon-left mb-3">
@@ -504,7 +508,9 @@
                                 class="form-control form-control-xl @error('password') is-invalid @enderror"
                                 placeholder="Kata Sandi (min. 8 karakter)" required autocomplete="new-password">
                             <div class="form-control-icon"><i class="bi bi-shield-lock"></i></div>
-                            @error('password') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
+                            <div class="invalid-feedback @error('password') d-block @enderror" id="password-error">
+                                {{ $errors->first('password') }}
+                            </div>
                         </div>
 
                         <div class="form-group position-relative has-icon-left mb-4">
@@ -512,6 +518,7 @@
                                 class="form-control form-control-xl"
                                 placeholder="Konfirmasi Kata Sandi" required autocomplete="new-password">
                             <div class="form-control-icon"><i class="bi bi-shield-check"></i></div>
+                            <div class="invalid-feedback" id="password_confirmation-error"></div>
                         </div>
 
                         <div class="d-flex gap-2">
@@ -559,56 +566,209 @@
             });
             const kelEl = document.getElementById('keluarga_id');
             if (kelEl) kelEl.required = !isBaru;
+
+            // Bersihkan error saat beralih mode
+            ['kub_id', 'alamat', 'status_tempat_tinggal', 'keluarga_id'].forEach(id => {
+                clearFieldError(id);
+            });
         }
 
-        // Inisialisasi saat load
-        document.addEventListener('DOMContentLoaded', function () {
-            const mode = document.getElementById('keluarga_mode').value || 'baru';
-            setKeluargaMode(mode);
+        // ── Helper Error Feedback Bahasa Indonesia ─────────────────────────────
+        function clearFieldError(fieldId) {
+            const field = document.getElementById(fieldId);
+            const errEl = document.getElementById(fieldId + '-error');
+            if (field) {
+                field.classList.remove('is-invalid');
+                field.setCustomValidity('');
+            }
+            if (errEl) {
+                errEl.classList.remove('d-block');
+                errEl.textContent = '';
+            }
+        }
 
-            document.querySelectorAll('#registerForm input, #registerForm select, #registerForm textarea').forEach(field => {
-                field.addEventListener('input', () => field.classList.remove('is-invalid'));
-                field.addEventListener('change', () => field.classList.remove('is-invalid'));
-            });
+        function showFieldError(fieldId, message) {
+            const field = document.getElementById(fieldId);
+            const errEl = document.getElementById(fieldId + '-error');
+            if (field) {
+                field.classList.add('is-invalid');
+                field.setCustomValidity(message);
+            }
+            if (errEl) {
+                errEl.classList.add('d-block');
+                errEl.textContent = message;
+            }
+        }
 
-            document.getElementById('registerForm').addEventListener('submit', function (event) {
-                for (let step = 1; step <= totalSteps; step++) {
-                    if (!validateStep(step, false)) {
-                        event.preventDefault();
-                        goToStep(step);
-                        validateStep(step);
-                        return;
+        // ── Validasi Step dengan Pesan Bahasa Indonesia ────────────────────────
+        function validateStep(step, showFeedback = true) {
+            let isValid = true;
+            let firstInvalid = null;
+
+            if (step === 1) {
+                const mode = document.getElementById('keluarga_mode').value || 'baru';
+                if (mode === 'baru') {
+                    const kub = document.getElementById('kub_id');
+                    if (!kub.value) {
+                        if (showFeedback) showFieldError('kub_id', 'KUB wajib dipilih.');
+                        isValid = false;
+                        if (!firstInvalid) firstInvalid = kub;
+                    }
+
+                    const alamat = document.getElementById('alamat');
+                    if (!alamat.value.trim()) {
+                        if (showFeedback) showFieldError('alamat', 'Alamat wajib diisi.');
+                        isValid = false;
+                        if (!firstInvalid) firstInvalid = alamat;
+                    }
+
+                    const stt = document.getElementById('status_tempat_tinggal');
+                    if (!stt.value) {
+                        if (showFeedback) showFieldError('status_tempat_tinggal', 'Status tempat tinggal wajib dipilih.');
+                        isValid = false;
+                        if (!firstInvalid) firstInvalid = stt;
+                    }
+                } else {
+                    const kel = document.getElementById('keluarga_id');
+                    if (!kel.value) {
+                        if (showFeedback) showFieldError('keluarga_id', 'Keluarga wajib dipilih.');
+                        isValid = false;
+                        if (!firstInvalid) firstInvalid = kel;
                     }
                 }
-            });
-        });
+            } else if (step === 2) {
+                const nama = document.getElementById('nama');
+                if (!nama.value.trim()) {
+                    if (showFeedback) showFieldError('nama', 'Nama lengkap wajib diisi.');
+                    isValid = false;
+                    if (!firstInvalid) firstInvalid = nama;
+                }
 
-        // ── Navigasi step ─────────────────────────────────────────────────────
-        function validateStep(step, showFeedback = true) {
-            const section = document.getElementById('step-' + step);
-            const fields = Array.from(section.querySelectorAll('input, select, textarea'))
-                .filter(field => !field.disabled && field.type !== 'hidden');
+                const tempatLahir = document.getElementById('tempat_lahir');
+                if (!tempatLahir.value.trim()) {
+                    if (showFeedback) showFieldError('tempat_lahir', 'Tempat lahir wajib diisi.');
+                    isValid = false;
+                    if (!firstInvalid) firstInvalid = tempatLahir;
+                }
 
-            for (const field of fields) {
-                field.classList.remove('is-invalid');
-
-                if (!field.checkValidity()) {
-                    field.classList.add('is-invalid');
-                    if (showFeedback) {
-                        field.reportValidity();
-                        field.focus({ preventScroll: true });
-                        field.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                const tglLahir = document.getElementById('tanggal_lahir');
+                if (!tglLahir.value) {
+                    if (showFeedback) showFieldError('tanggal_lahir', 'Tanggal lahir wajib diisi.');
+                    isValid = false;
+                    if (!firstInvalid) firstInvalid = tglLahir;
+                } else {
+                    const birthDate = new Date(tglLahir.value);
+                    const today = new Date();
+                    let age = today.getFullYear() - birthDate.getFullYear();
+                    const m = today.getMonth() - birthDate.getMonth();
+                    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                        age--;
                     }
-                    return false;
+                    if (age < 10) {
+                        if (showFeedback) showFieldError('tanggal_lahir', 'Anak di bawah 10 tahun tidak dapat mendaftar akun sendiri. Silakan hubungi Kepala Keluarga, Ketua KUB, atau Sekretariat Paroki.');
+                        isValid = false;
+                        if (!firstInvalid) firstInvalid = tglLahir;
+                    }
+                }
+
+                const jk = document.getElementById('jenis_kelamin');
+                if (!jk.value) {
+                    if (showFeedback) showFieldError('jenis_kelamin', 'Jenis kelamin wajib dipilih.');
+                    isValid = false;
+                    if (!firstInvalid) firstInvalid = jk;
+                }
+
+                const hub = document.getElementById('hubungan_keluarga');
+                if (!hub.value) {
+                    if (showFeedback) showFieldError('hubungan_keluarga', 'Hubungan dalam keluarga wajib dipilih.');
+                    isValid = false;
+                    if (!firstInvalid) firstInvalid = hub;
+                }
+
+                const sp = document.getElementById('status_pernikahan');
+                if (!sp.value) {
+                    if (showFeedback) showFieldError('status_pernikahan', 'Status pernikahan wajib dipilih.');
+                    isValid = false;
+                    if (!firstInvalid) firstInvalid = sp;
+                }
+
+                const telp = document.getElementById('no_telepon');
+                if (!telp.value.trim()) {
+                    if (showFeedback) showFieldError('no_telepon', 'Nomor telepon wajib diisi.');
+                    isValid = false;
+                    if (!firstInvalid) firstInvalid = telp;
+                }
+
+                const pdd = document.getElementById('pendidikan');
+                if (!pdd.value) {
+                    if (showFeedback) showFieldError('pendidikan', 'Pendidikan terakhir wajib dipilih.');
+                    isValid = false;
+                    if (!firstInvalid) firstInvalid = pdd;
+                }
+
+                const pek = document.getElementById('pekerjaan');
+                if (!pek.value.trim()) {
+                    if (showFeedback) showFieldError('pekerjaan', 'Pekerjaan wajib diisi.');
+                    isValid = false;
+                    if (!firstInvalid) firstInvalid = pek;
+                }
+            } else if (step === 3) {
+                const email = document.getElementById('email');
+                const emailVal = email.value.trim();
+                if (!emailVal) {
+                    if (showFeedback) showFieldError('email', 'Alamat email wajib diisi.');
+                    isValid = false;
+                    if (!firstInvalid) firstInvalid = email;
+                } else {
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(emailVal)) {
+                        if (showFeedback) showFieldError('email', 'Format alamat email tidak valid (contoh: nama@email.com).');
+                        isValid = false;
+                        if (!firstInvalid) firstInvalid = email;
+                    }
+                }
+
+                const pwd = document.getElementById('password');
+                const pwdVal = pwd.value;
+                if (!pwdVal) {
+                    if (showFeedback) showFieldError('password', 'Kata sandi wajib diisi.');
+                    isValid = false;
+                    if (!firstInvalid) firstInvalid = pwd;
+                } else if (pwdVal.length < 8) {
+                    if (showFeedback) showFieldError('password', 'Kata sandi minimal 8 karakter.');
+                    isValid = false;
+                    if (!firstInvalid) firstInvalid = pwd;
+                }
+
+                const pwdConfirm = document.getElementById('password_confirmation');
+                const pwdConfirmVal = pwdConfirm.value;
+                if (!pwdConfirmVal) {
+                    if (showFeedback) showFieldError('password_confirmation', 'Konfirmasi kata sandi wajib diisi.');
+                    isValid = false;
+                    if (!firstInvalid) firstInvalid = pwdConfirm;
+                } else if (pwdVal && pwdVal !== pwdConfirmVal) {
+                    if (showFeedback) showFieldError('password_confirmation', 'Konfirmasi kata sandi tidak cocok.');
+                    isValid = false;
+                    if (!firstInvalid) firstInvalid = pwdConfirm;
                 }
             }
 
-            return true;
+            if (!isValid && showFeedback && firstInvalid) {
+                firstInvalid.focus({ preventScroll: true });
+                firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+
+            return isValid;
         }
 
+        // ── Navigasi step ─────────────────────────────────────────────────────
         function goToStep(step, validateBeforeNext = false) {
-            if (validateBeforeNext && step > currentStep && !validateStep(currentStep)) {
-                return;
+            if (validateBeforeNext && step > currentStep) {
+                for (let s = currentStep; s < step; s++) {
+                    if (!validateStep(s, true)) {
+                        return;
+                    }
+                }
             }
 
             document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
@@ -626,7 +786,39 @@
             document.getElementById('auth-left').scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // ── Redirect ke step yang error ───────────────────────────────────────
+        // Inisialisasi saat load
+        document.addEventListener('DOMContentLoaded', function () {
+            const mode = document.getElementById('keluarga_mode').value || 'baru';
+            setKeluargaMode(mode);
+
+            const allFieldIds = [
+                'kub_id', 'alamat', 'status_tempat_tinggal', 'keluarga_id',
+                'nama', 'tempat_lahir', 'tanggal_lahir', 'jenis_kelamin',
+                'hubungan_keluarga', 'status_pernikahan', 'no_telepon',
+                'pendidikan', 'pekerjaan', 'email', 'password', 'password_confirmation'
+            ];
+
+            allFieldIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener('input', () => clearFieldError(id));
+                    el.addEventListener('change', () => clearFieldError(id));
+                }
+            });
+
+            document.getElementById('registerForm').addEventListener('submit', function (event) {
+                for (let step = 1; step <= totalSteps; step++) {
+                    if (!validateStep(step, false)) {
+                        event.preventDefault();
+                        goToStep(step);
+                        validateStep(step, true);
+                        return;
+                    }
+                }
+            });
+        });
+
+        // ── Redirect ke step yang error bila ada error dari server ─────────────
         @if ($errors->any())
             document.addEventListener('DOMContentLoaded', function() {
                 const step1Fields = ['kub_id', 'alamat', 'status_tempat_tinggal', 'keluarga_id'];

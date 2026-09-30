@@ -34,6 +34,33 @@ class LoginRequest extends FormRequest
     }
 
     /**
+     * Get custom messages for validator errors.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'email.required'    => 'Alamat email wajib diisi.',
+            'email.email'       => 'Format alamat email tidak valid.',
+            'password.required' => 'Kata sandi wajib diisi.',
+        ];
+    }
+
+    /**
+     * Get custom attributes for validator errors.
+     *
+     * @return array<string, string>
+     */
+    public function attributes(): array
+    {
+        return [
+            'email'    => 'Alamat Email',
+            'password' => 'Kata Sandi',
+        ];
+    }
+
+    /**
      * Attempt to authenticate the request's credentials.
      *
      * @throws ValidationException

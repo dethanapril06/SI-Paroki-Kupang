@@ -1,5 +1,7 @@
 @extends('layouts.guest')
 
+@section('title', 'Pendaftaran Berhasil - Sistem Informasi Paroki')
+
 @section('content')
     <style>
         :root { --bs-body-bg-rgb: 255, 255, 255; }
